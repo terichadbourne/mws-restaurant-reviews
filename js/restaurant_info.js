@@ -91,7 +91,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   // get the right image url from the banner directory
   image.src = DBHelper.imageUrlForRestaurant(restaurant, 'banner');
   image.alt = 'restaurant image'
-  
+
   const cuisine = document.getElementById('restaurant-cuisine');
   cuisine.innerHTML = restaurant.cuisine_type;
 
