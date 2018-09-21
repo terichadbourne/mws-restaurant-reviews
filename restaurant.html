@@ -33,7 +33,7 @@
     <main role="main" id="maincontent">
       <div id="padding-container">
         <!-- Beginning restaurant -->
-        <div id="restaurant-container">
+        <div id="restaurant-container" role="region" aria-label="Restaurant Details">
 
           <div id="restaurant-header-container">
             <h1 id="restaurant-name"></h1>
@@ -44,7 +44,7 @@
 
           <div id="restaurant-detail-container">
             <p id="restaurant-address"></p>
-            <table id="restaurant-hours"></table>
+            <table id="restaurant-hours" aria-label="Hours"></table>
           </div>
           <!-- Beginning map -->
           <div id="map-container">
@@ -55,7 +55,7 @@
         <!-- end restaurant container -->
 
         <!-- Beginning reviews -->
-        <div id="reviews-container">
+        <div id="reviews-container" role="region" aria-label="Restaurant Reviews">
           <ul id="reviews-list"></ul>
         </div>
         <!-- End reviews -->
