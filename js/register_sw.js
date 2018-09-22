@@ -1,7 +1,7 @@
 // if browser supports service worker, register the `sw.js` file
-// console log success or failure 
+// console log success or failure
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
+  navigator.serviceWorker.register('js/sw.js')
     .then(success => {
       console.log("Successfully registered service worker: " + success.scope)
     })
