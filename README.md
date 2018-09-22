@@ -1,32 +1,25 @@
-# Mobile Web Specialist Certification Course
----
-#### _Three Stage Course Material Project - Restaurant Reviews_
+# Udacity Mobile Web Specialist Certification Course
 
-## Project Overview: Stage 1
+## Restaurant Reviews Project Overview: Stage 1
 
-For the **Restaurant Reviews** projects, you will incrementally convert a static webpage to a mobile-ready web application. In **Stage One**, you will take a static design that lacks accessibility and convert the design to be responsive on different sized displays and accessible for screen reader use. You will also add a service worker to begin the process of creating a seamless offline experience for your users.
+This **Restaurant Reviews** project was created for Udacity's Mobile Web Specialist Nanodegree. My submission for Stage 1 of the 3-part project takes a static design that lacks accessibility and converts the design to be responsive on different sized displays and accessible for screen reader use. It also adds a service worker to begin the process of creating a seamless offline experience for my users.
 
-### Specification
+To see the state of the project before I implemented my own changes, you can visit [Udacity's starter code repo](https://github.com/udacity/mws-restaurant-stage-1).
 
-You have been provided the code for a restaurant reviews website. The code has a lot of issues. It’s barely usable on a desktop browser, much less a mobile device. It also doesn’t include any standard accessibility features, and it doesn’t work offline at all. Your job is to update the code to resolve these issues while still maintaining the included functionality. 
+### How to run this app
 
-### What do I do from here?
+1. Fork and clone this repository. 
 
-1. In this folder, start up a simple HTTP server to serve up the site files on your local computer. Python has some simple tools to do this, and you don't even need to know Python. For most people, it's already installed on your computer. 
+2. This project uses [leafletjs](https://leafletjs.com/) with [Mapbox](https://www.mapbox.com/). Mapbox is free to use, and does not require any payment information. However, since tokens should be confidential, you will not find my active token in this repo and will need to get your own.
 
-In a terminal, check the version of Python you have: `python -V`. If you have Python 2.x, spin up the server with `python -m SimpleHTTPServer 8000` (or some other port, if port 8000 is already in use.) For Python 3.x, you can use `python3 -m http.server 8000`. If you don't have Python installed, navigate to Python's [website](https://www.python.org/) to download and install the software.
+After acquiring a token from [Mapbox](https://www.mapbox.com/), navigate to the root directory in the command line and create a hidden file to store it in. To do this, type `touch js/.secrets.js`. Be sure to match this filename exactly, as it is referenced in the code and prevented from accidental upload to GitHub by its inclusion in the `.gitignore` file.
 
-2. With your server running, visit the site: `http://localhost:8000`, and look around for a bit to see what the current experience looks like.
-3. Explore the provided code, and start making a plan to implement the required features in three areas: responsive design, accessibility and offline use.
-4. Write code to implement the updates to get this site on its way to being a mobile-ready website.
+3. Open your `js/.secrets.js` file and add the line of code: `const topSecretMapboxToken = '<YOUR MAPBOX API KEY HERE>'` (keep the quotes and remove the < > when inserting your own token). Save this file and do `git status` from the command line to ensure no change is registered by git (which will be the case if you named the file properly).
 
-## Leaflet.js and Mapbox:
+4. From the main project directory, start up a simple HTTP server to serve up the site files on your local computer. Python has some simple tools to do this, and you don't even need to know Python. For most people, it's already installed on your computer.
 
-This repository uses [leafletjs](https://leafletjs.com/) with [Mapbox](https://www.mapbox.com/). You need to replace `<your MAPBOX API KEY HERE>` with a token from [Mapbox](https://www.mapbox.com/). Mapbox is free to use, and does not require any payment information. 
+In a terminal, check the version of Python you have: `python -V`. If you have Python 2.x, spin up the server with `python -m SimpleHTTPServer 8000`. For Python 3.x, you can use `python3 -m http.server 8000`. If you don't have Python installed, navigate to Python's [website](https://www.python.org/) to download and install the software.
 
-### Note about ES6
+5. With your server running, visit the site at: `http://localhost:8000`
 
-Most of the code in this project has been written to the ES6 JavaScript specification for compatibility with modern web browsers and future proofing JavaScript code. As much as possible, try to maintain use of ES6 in any additional JavaScript you write. 
-
-
-
+6. If you want to test offline functionality on localhost, you will either need to kill your server (`Ctrl-C`) or turn on offline mode in Chrome or Firefox dev tools. (Remember, you must always visit a site once while online to cache resources before it becomes accessible offline.)
