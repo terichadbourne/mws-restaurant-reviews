@@ -8,7 +8,7 @@ To see the state of the project before I implemented my own changes, you can vis
 
 ### How to run this app
 
-1. Fork and clone this repository. 
+1. Fork and clone this repository.
 
 2. This project uses [leafletjs](https://leafletjs.com/) with [Mapbox](https://www.mapbox.com/). Mapbox is free to use, and does not require any payment information. However, since tokens should be confidential, you will not find my active token in this repo and will need to get your own.
 
@@ -20,6 +20,6 @@ After acquiring a token from [Mapbox](https://www.mapbox.com/), navigate to the 
 
 In a terminal, check the version of Python you have: `python -V`. If you have Python 2.x, spin up the server with `python -m SimpleHTTPServer 8000`. For Python 3.x, you can use `python3 -m http.server 8000`. If you don't have Python installed, navigate to Python's [website](https://www.python.org/) to download and install the software.
 
-5. With your server running, visit the site at: `http://localhost:8000`
+5. With your server running, visit the site at: `http://localhost:8000` (SECURITY NOTE: Viewers of your localhost application can still discover your Mapbox token by revealing the source code through dev tools.)
 
 6. If you want to test offline functionality on localhost, you will either need to kill your server (`Ctrl-C`) or turn on offline mode in Chrome or Firefox dev tools. (Remember, you must always visit a site once while online to cache resources before it becomes accessible offline.)
