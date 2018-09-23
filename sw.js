@@ -7,18 +7,18 @@ self.addEventListener('install', event => {
     caches.open(cacheID)
       .then(cache => {
         return cache.addAll([
-          '/',
-          'index.html',
-          'restaurant.html',
-          'data/restaurants.json',
-          'js/',
-          'register_sw.js',
-          'js/main.js',
-          'js/dbhelper.js',
-          'js/restaurant_info.js',
-          'js/.secrets.js',
-          'css/styles.css',
-          'img/'
+          './',
+          './index.html',
+          './restaurant.html',
+          './data/restaurants.json',
+          './js/',
+          './register_sw.js',
+          './js/main.js',
+          './js/dbhelper.js',
+          './js/restaurant_info.js',
+          './js/.secrets.js',
+          './css/styles.css',
+          './img/'
         ])
         .catch(error => {
           console.log("Failed to open cache: " + error);
