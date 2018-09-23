@@ -29,7 +29,7 @@ self.addEventListener('install', event => {
 
 // load from cache first, then network if available
 self.addEventListener('fetch', event => {
-  console.log('in self.addEventListener');
+  console.log('event request is:');
   console.log(event.request);
   event.respondWith(
     caches.match(event.request).then(response => {
