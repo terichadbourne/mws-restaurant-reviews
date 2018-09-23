@@ -162,7 +162,9 @@ createRestaurantHTML = (restaurant) => {
   image.className = 'restaurant-img';
   // get the right image url from the tile directory
   image.src = DBHelper.imageUrlForRestaurant(restaurant, 'tile');
-  image.alt = 'restaurant image'
+  // give it an alt tag that includes the restaurant name, per
+  // instructor's suggestion 
+  image.alt = `Image of ${restaurant.name} restaurant`
   li.append(image);
 
   const name = document.createElement('h1');
