@@ -12,7 +12,7 @@ self.addEventListener('install', event => {
           'restaurant.html',
           'data/restaurants.json',
           'js/',
-          'js/register_sw.js',
+          'register_sw.js',
           'js/main.js',
           'js/dbhelper.js',
           'js/restaurant_info.js',
