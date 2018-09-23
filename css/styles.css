@@ -83,12 +83,11 @@ nav h1 a {
   text-transform: uppercase;
 }
 nav #breadcrumb {
-    padding: 10px 20px 16px;
+    padding: 10px 20px;
     list-style: none;
     background-color: #eee;
     font-size: 0.8rem;
     margin: auto;
-    width: 100%;
 		text-align: left;
 }
 
@@ -321,8 +320,7 @@ nav #breadcrumb {
 		padding-right: 30px;
 	}
 	nav #breadcrumb {
-	    padding: 10px 30px 16px;
-			max-width: 990px;
+	  padding: 10px 30px;
 	}
 }
 
@@ -344,6 +342,10 @@ nav #breadcrumb {
 	}
 	nav h1 {
 		padding: 10px;
+	}
+
+	nav #breadcrumb {
+		padding: 8px 20px;
 	}
 	#restaurant-cuisine {
 	  font-size: 1.1rem;
