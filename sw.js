@@ -63,32 +63,32 @@ self.addEventListener('fetch', event => {
         return response;
       }
       // look for resource on network
-      return fetch(event.request);
+      // return fetch(event.request);
 
       // make a clone of the fetch request since a request can
       // only be consumed once
-      // const fetchRequest = event.request.clone();
-      //
-      // // try to access the requested resource on the network
-      // // rather than locally
-      // return fetch(fetchRequest)
-      //   .then(response => {
-      //     // if there's something wrong with the response (it doesn't exist,
-      //     // isn't of type basic, or doesn't have a 200 status), return the
-      //     // crappy response itself
-      //     if (!response || response.type !== 'basic' || response.status !== 200 ) {
-      //       return response;
-      //     }
-      //     // otherwise, if there's a valid network response, clone it to cache it
-      //     var validResponseToCache = response.clone();
-      //
-      //     caches.open(cacheID)
-      //       // add the network response to the cache
-      //       .then(cache => {
-      //         cache.put(event.request, validResponseToCache)
-      //       })
-      //   }) //end network fetch response
-      
+      const fetchRequest = event.request.clone();
+
+      // try to access the requested resource on the network
+      // rather than locally
+      return fetch(fetchRequest)
+        .then(response => {
+          // if there's something wrong with the response (it doesn't exist,
+          // isn't of type basic, or doesn't have a 200 status), return the
+          // crappy response itself
+          if (!response || response.type !== 'basic' || response.status !== 200 ) {
+            return response;
+          }
+          // otherwise, if there's a valid network response, clone it to cache it
+          var validResponseToCache = response.clone();
+
+          caches.open(cacheID)
+            // add the network response to the cache
+            .then(cache => {
+              cache.put(event.request, validResponseToCache)
+            })
+        }) //end network fetch response
+
     }) // end match.then response
   ) // end event.respondwith
 }); //end event listener
