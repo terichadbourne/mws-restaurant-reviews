@@ -114,6 +114,19 @@ nav #breadcrumb {
     color: #01447e;
     text-decoration: underline;
 }
+
+.skip-link {
+	position:absolute;
+	top:-40px;
+	color: white;
+	background-color: #005e8f;
+	padding: 5px;
+	margin: 5px;
+}
+.skip-link:focus {
+	/* position: absolute; */
+	top: 10px;
+}
 /* ====================== Map ====================== */
 #map {
   height: 400px;
