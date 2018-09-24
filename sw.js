@@ -38,19 +38,30 @@ self.addEventListener('install', event => {
   );
  });
 
+
 // when there's a fetch request
 self.addEventListener('fetch', event => {
-  console.log(`requested URL is ${event.request.url}`)
-  let cacheRequest = event.request
-  // if the request is for a specific restaurant page, it won't
-  // find anything in the cache with a search string included
-  // so we change the request to look for just restaurant.html
-  if (event.request.url.includes("restaurant.html?id")) {
-    console.log('requested a specific restaurant page')
-    cacheRequest = new Request('restaurant.html');
-    console.log(`revised requested URL is ${cacheRequest.url}`)
+  const requestUrl = new URL(event.request.url)
+  let cacheRequest = event.request;
+
+  // if the request is for the website itself (versus mapbox/leaflet)...
+  if (requestUrl.origin === location.origin) {
+    console.log(`requesting internal resource: ${requestUrl}`)
+    // if the request is for a specific restaurant page, it won't
+    // find anything in the cache with a search string included
+    // so change the request to look for just restaurant.html
+    if (event.request.url.includes("restaurant.html?id")) {
+      console.log('requested a specific restaurant page')
+      cacheRequest = new Request('restaurant.html');
+      console.log(`revised requested URL is ${cacheRequest.url}`)
+    }
+  } else {
+    // if the request is for mapbox or leaflet (external resources),
+    // don't mess with it
+      console.log(`requesting external resource: ${requestUrl}`)
   }
-  // intercept it and respond accordingly...
+
+  // In either case (internal or external resource requested)
   event.respondWith(
     // use cacheRequest here so that it looks for restaurant.html
     // without the search string if relevant, otherwise the
@@ -72,6 +83,7 @@ self.addEventListener('fetch', event => {
           }
           // otherwise, if there's a valid network response, clone it to cache it
           var validResponseToCache = response.clone();
+          var validResponseToReturn = response.clone();
 
           caches.open(cacheID)
             // add the network response to the cache
@@ -79,9 +91,10 @@ self.addEventListener('fetch', event => {
               cache.put(event.request, validResponseToCache)
             })
 
-          return validResponseToCache;
+          return validResponseToReturn;
         }) //end network fetch response
-      ) // end return response or fetch event request
+      ) // end return response || fetch event request
     }) // end match.then response
   ) // end event.respondwith
-}); //end event listener
+
+}) //end selft.addEventListener
