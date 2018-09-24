@@ -12,27 +12,30 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * Initialize leaflet map
  */
 initMap = () => {
-  fetchRestaurantFromURL((error, restaurant) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.newMap = L.map('map', {
-        center: [restaurant.latlng.lat, restaurant.latlng.lng],
-        zoom: 16,
-        scrollWheelZoom: false
-      });
-      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-        mapboxToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
-        maxZoom: 18,
-        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-          '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-          'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-        id: 'mapbox.streets'
-      }).addTo(newMap);
-      fillBreadcrumb();
-      DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
-    }
-  });
+  //only try to initialize map if browser is online 
+  if (navigator.onLine) {
+    fetchRestaurantFromURL((error, restaurant) => {
+      if (error) { // Got an error!
+        console.error(error);
+      } else {
+        self.newMap = L.map('map', {
+          center: [restaurant.latlng.lat, restaurant.latlng.lng],
+          zoom: 16,
+          scrollWheelZoom: false
+        });
+        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
+          mapboxToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
+          maxZoom: 18,
+          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+          id: 'mapbox.streets'
+        }).addTo(newMap);
+        fillBreadcrumb();
+        DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
+      }
+    });
+  }
 }
 
 /* window.initMap = () => {
@@ -90,7 +93,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   image.className = 'restaurant-img'
   // get the right image url from the banner directory
   image.src = DBHelper.imageUrlForRestaurant(restaurant, 'banner');
-  // give it an alt tag that includes the restaurant name, per 
+  // give it an alt tag that includes the restaurant name, per
   // instructor's suggestion
   image.alt = image.alt = `Image of ${restaurant.name} restaurant`
 

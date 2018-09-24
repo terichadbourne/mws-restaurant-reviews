@@ -72,19 +72,22 @@ fillCuisinesHTML = (cuisines = self.cuisines) => {
  * Initialize leaflet map, called from HTML.
  */
 initMap = () => {
-  self.newMap = L.map('map', {
-        center: [40.722216, -73.987501],
-        zoom: 12,
-        scrollWheelZoom: false
-      });
-  L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-    mapboxToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
-    maxZoom: 18,
-    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    id: 'mapbox.streets'
-  }).addTo(newMap);
+  // only try to create a map if browser is online
+  if (navigator.onLine) {
+    self.newMap = L.map('map', {
+          center: [40.722216, -73.987501],
+          zoom: 12,
+          scrollWheelZoom: false
+        });
+    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
+      mapboxToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
+      maxZoom: 18,
+      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+      id: 'mapbox.streets'
+    }).addTo(newMap);
+  }
 
   updateRestaurants();
 }
@@ -163,7 +166,7 @@ createRestaurantHTML = (restaurant) => {
   // get the right image url from the tile directory
   image.src = DBHelper.imageUrlForRestaurant(restaurant, 'tile');
   // give it an alt tag that includes the restaurant name, per
-  // instructor's suggestion 
+  // instructor's suggestion
   image.alt = `Image of ${restaurant.name} restaurant`
   li.append(image);
 
@@ -196,16 +199,20 @@ createRestaurantHTML = (restaurant) => {
  * Add markers for current restaurants to the map.
  */
 addMarkersToMap = (restaurants = self.restaurants) => {
-  restaurants.forEach(restaurant => {
-    // Add marker to the map
-    const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.newMap);
-    marker.on("click", onClick);
-    function onClick() {
-      window.location.href = marker.options.url;
-    }
-    self.markers.push(marker);
-  });
-
+  // only try to add markers to map if newMap is defined
+  // (it will be undefinied if offline)
+  console.log(`type of newMap is ${typeof newMap}`)
+  if (self.newMap) {
+    restaurants.forEach(restaurant => {
+      // Add marker to the map
+      const marker = DBHelper.mapMarkerForRestaurant(restaurant, self.newMap);
+      marker.on("click", onClick);
+      function onClick() {
+        window.location.href = marker.options.url;
+      }
+      self.markers.push(marker);
+    });
+  }
 }
 /* addMarkersToMap = (restaurants = self.restaurants) => {
   restaurants.forEach(restaurant => {
