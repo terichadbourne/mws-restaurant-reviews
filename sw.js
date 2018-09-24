@@ -1,39 +1,94 @@
 // create a numerical cache ID that can be updated when needed
 let cacheID = "mws-restaurant-0001";
 
-// when service worker is installed, cache these items
+// create an array of URLs that need to be cached
+// setting as its own variable so it's easier to change later
+let urlsToCache = [
+  './',
+  './index.html',
+  './restaurant.html',
+  './data/restaurants.json',
+  './js/',
+  './register_sw.js',
+  './js/main.js',
+  './js/dbhelper.js',
+  './js/restaurant_info.js',
+  './js/.secrets.js',
+  './css/styles.css',
+  './img/'
+]
+
+// when service worker is installed
 self.addEventListener('install', event => {
+  // wait for installation to complete
   event.waitUntil(
+    // open a cache by the name given in the variable cacheID
+    // or else create one by that name if it doesn't yet exist
     caches.open(cacheID)
       .then(cache => {
-        return cache.addAll([
-          './',
-          './index.html',
-          './restaurant.html',
-          './data/restaurants.json',
-          './js/',
-          './register_sw.js',
-          './js/main.js',
-          './js/dbhelper.js',
-          './js/restaurant_info.js',
-          './js/.secrets.js',
-          './css/styles.css',
-          './img/'
-        ])
+        // log success
+        console.log(`Opened cache called ${cacheID}`)
+        // add specified list of URLs to this cache
+        return cache.addAll(urlsToCache)
         .catch(error => {
+          // log error
           console.log("Failed to open cache: " + error);
         });
       })
   );
  });
 
-// load from cache first, then network if available
+// when there's a fetch request
 self.addEventListener('fetch', event => {
-  console.log('event request is:');
-  console.log(event.request);
+  console.log(`requested URL is ${event.request.url}`)
+  let cacheRequest = event.request
+  // if the request is for a specific restaurant page, it won't
+  // find anything in the cache with a search string included
+  // so we change the request to look for just restaurant.html
+  if (event.request.url.includes("restaurant.html?id")) {
+    console.log('requested a specific restaurant page')
+    cacheRequest = new Request('restaurant.html');
+    console.log(`revised requested URL is ${cacheRequest.url}`)
+  }
+  // intercept it and respond accordingly...
   event.respondWith(
-    caches.match(event.request).then(response => {
-      return response || fetch(event.request);
-    })
-  );
-});
+    // use cacheRequest here so that it looks for restaurant.html
+    // without the search string if relevant, otherwise the
+    // original request
+    caches.match(cacheRequest).then(response => {
+      // if the requested resource is found in the cache,
+      // load the cached version for quickest load time and
+      // offline functionality
+      if (response) {
+        return response;
+      }
+      // look for resource on network
+      return fetch(event.request);
+
+      // make a clone of the fetch request since a request can
+      // only be consumed once
+      // const fetchRequest = event.request.clone();
+      //
+      // // try to access the requested resource on the network
+      // // rather than locally
+      // return fetch(fetchRequest)
+      //   .then(response => {
+      //     // if there's something wrong with the response (it doesn't exist,
+      //     // isn't of type basic, or doesn't have a 200 status), return the
+      //     // crappy response itself
+      //     if (!response || response.type !== 'basic' || response.status !== 200 ) {
+      //       return response;
+      //     }
+      //     // otherwise, if there's a valid network response, clone it to cache it
+      //     var validResponseToCache = response.clone();
+      //
+      //     caches.open(cacheID)
+      //       // add the network response to the cache
+      //       .then(cache => {
+      //         cache.put(event.request, validResponseToCache)
+      //       })
+      //   }) //end network fetch response
+      
+    }) // end match.then response
+  ) // end event.respondwith
+}); //end event listener

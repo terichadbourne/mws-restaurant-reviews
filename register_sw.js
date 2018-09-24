@@ -8,4 +8,9 @@ if ('serviceWorker' in navigator) {
     .catch(error => {
       console.log("Error registering service worker: " + error)
     })
+} else {
+  // console log lack of support for service worker as cleverly
+  // suggested in SitePoint's tutorial at:
+  // https://www.sitepoint.com/getting-started-with-service-workers/
+  console.log("Service worker isn't supported by this browser.")
 }
