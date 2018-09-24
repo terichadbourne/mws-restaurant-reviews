@@ -78,6 +78,8 @@ self.addEventListener('fetch', event => {
             .then(cache => {
               cache.put(event.request, validResponseToCache)
             })
+
+          return validResponseToCache;
         }) //end network fetch response
       ) // end return response or fetch event request
     }) // end match.then response
