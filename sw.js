@@ -58,20 +58,11 @@ self.addEventListener('fetch', event => {
     caches.match(cacheRequest).then(response => {
       // if the requested resource is found in the cache,
       // load the cached version for quickest load time and
-      // offline functionality
-      if (response) {
-        return response;
-      }
-      // look for resource on network
-      // return fetch(event.request);
-
-      // make a clone of the fetch request since a request can
-      // only be consumed once
-      const fetchRequest = event.request.clone();
-
-      // try to access the requested resource on the network
-      // rather than locally
-      return fetch(fetchRequest)
+      // offline functionality, otherwise attempt to fetch from
+      // live network
+      return (response ||
+        fetch(event.request)
+        // if fetched from live server, then save resource to cache
         .then(response => {
           // if there's something wrong with the response (it doesn't exist,
           // isn't of type basic, or doesn't have a 200 status), return the
@@ -88,7 +79,7 @@ self.addEventListener('fetch', event => {
               cache.put(event.request, validResponseToCache)
             })
         }) //end network fetch response
-
+      ) // end return response or fetch event request
     }) // end match.then response
   ) // end event.respondwith
 }); //end event listener
