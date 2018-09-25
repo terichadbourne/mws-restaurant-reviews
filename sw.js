@@ -14,8 +14,7 @@ let urlsToCache = [
   './js/dbhelper.js',
   './js/restaurant_info.js',
   './js/.secrets.js',
-  './css/styles.css',
-  './img/'
+  './css/styles.css'
 ]
 
 // when service worker is installed
@@ -44,29 +43,38 @@ self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url)
   let cacheRequest = event.request;
 
-  // if the request is for the website itself (versus mapbox/leaflet)...
-  if (requestUrl.origin === location.origin) {
-    console.log(`requesting internal resource: ${requestUrl}`)
-    // if the request is for a specific restaurant page, it won't
-    // find anything in the cache with a search string included
-    // so change the request to look for just restaurant.html
-    if (event.request.url.includes("restaurant.html?id")) {
-      console.log('requested a specific restaurant page')
-      cacheRequest = new Request('restaurant.html');
-      console.log(`revised requested URL is ${cacheRequest.url}`)
-    }
-  } else {
-    // if the request is for mapbox or leaflet (external resources),
-    // don't mess with it
-      console.log(`requesting external resource: ${requestUrl}`)
-  }
+  // if the request is for a specific restaurant page, it won't
+  // find anything in the cache with a search string included
+  // so change the request to look for just restaurant.html
+  if (event.request.url.includes("restaurant.html?id")) {
+    console.log('requested a specific restaurant page')
+    cacheRequest = new Request('/restaurant.html');
+    console.log(`revised requested URL is ${cacheRequest.url}`);
+    event.respondWith(
+      caches.match(cacheRequest).then(response => {
+        // if the requested resource is found in the cache,
+        // load the cached version for quickest load time and
+        // offline functionality, otherwise attempt to fetch from
+        // live network
+        return (response || fetch(event.request))
+      }) // end then
+    ) //end event.respondWith
+    return;
+  } // end if clause
+
+  // } else {
+  //   // if the request is for mapbox or leaflet (external resources),
+  //   // don't mess with it
+  //     console.log(`requesting external resource: ${requestUrl}`)
+  // }
 
   // In either case (internal or external resource requested)
   event.respondWith(
     // use cacheRequest here so that it looks for restaurant.html
     // without the search string if relevant, otherwise the
     // original request
-    caches.match(cacheRequest).then(response => {
+    // console.log(`cacheRequestUrl right before looking in cache is ${cacheRequest.url}`)
+    caches.match(event.request).then(response => {
       // if the requested resource is found in the cache,
       // load the cached version for quickest load time and
       // offline functionality, otherwise attempt to fetch from
@@ -78,7 +86,7 @@ self.addEventListener('fetch', event => {
           // if there's something wrong with the response (it doesn't exist,
           // isn't of type basic, or doesn't have a 200 status), return the
           // crappy response itself
-          if (!response || response.type !== 'basic' || response.status !== 200 ) {
+          if(!response.ok) {
             return response;
           }
           // otherwise, if there's a valid network response, clone it to cache it
@@ -96,5 +104,4 @@ self.addEventListener('fetch', event => {
       ) // end return response || fetch event request
     }) // end match.then response
   ) // end event.respondwith
-
 }) //end selft.addEventListener
