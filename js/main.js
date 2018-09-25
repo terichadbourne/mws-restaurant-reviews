@@ -3,12 +3,18 @@ let restaurants,
   cuisines
 var newMap
 var markers = []
+var mapDiv = document.getElementById("map");
 
 /**
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  initMap(); // added
+  if (!navigator.onLine) {
+    mapDiv.classList.add("offline")
+  } else {
+    mapDiv.classList.remove("offline")
+  }
+  initMap();
   fetchNeighborhoods();
   fetchCuisines();
 });
@@ -87,6 +93,7 @@ initMap = () => {
         'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
       id: 'mapbox.streets'
     }).addTo(newMap);
+    mapDiv.classList.remove("offline") // set map div class to reflect online status
   }
 
   updateRestaurants();

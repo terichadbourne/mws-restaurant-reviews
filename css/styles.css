@@ -133,6 +133,16 @@ nav #breadcrumb {
   width: 100%;
   background-color: #ccc;
 }
+
+#map.offline {
+	height: 30px;
+	padding-top: 10px;
+	padding-bottom: 10px;
+	text-align: center;
+	background-color: #005e8f;
+	color: white;
+}
+
 /* ====================== Restaurant Filtering ====================== */
 .filter-options {
   width: 100%;
@@ -218,14 +228,22 @@ nav #breadcrumb {
 /* ====================== Restaurant Details ====================== */
 .inside #map-container {
   background: blue none repeat scroll 0 0;
-  height: 175px;
-  width: 100%;
 	margin: 10px auto;
 }
+
+.inside #map-container.offline {
+
+}
+
 .inside #map {
   background-color: #ccc;
-  height: 100%;
+	height: 175px;
   width: 100%;
+}
+
+.inside #map.offline {
+  color: #005e8f;
+	height: 40px;
 }
 #padding-container {
 	padding-left: 20px;
@@ -324,7 +342,7 @@ nav #breadcrumb {
 	}
 	.inside #map-container {
 	  background: blue none repeat scroll 0 0;
-	  height: 175px;
+	  height: 40px;
 	  width: 50%;
 		margin: 10px auto;
 	}

@@ -1,10 +1,16 @@
 let restaurant;
 var newMap;
+var mapDiv = document.getElementById("map");
 
 /**
  * Initialize map as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
+  if (!navigator.onLine) {
+    mapDiv.classList.add("offline")
+  } else {
+    mapDiv.classList.remove("offline")
+  }
   initMap();
 });
 
@@ -31,9 +37,11 @@ initMap = () => {
               'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
             id: 'mapbox.streets'
           }).addTo(newMap);
+          mapDiv.classList.remove("offline") // set map div class to reflect online status
         } // end if navigator is online
         fillBreadcrumb();
         if (navigator.onLine) {
+          mapDiv.classList.remove("offline") // set map div class to reflect online status
           DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
         }
       } //end else
