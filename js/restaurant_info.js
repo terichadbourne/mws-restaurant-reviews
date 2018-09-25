@@ -12,31 +12,33 @@ document.addEventListener('DOMContentLoaded', (event) => {
  * Initialize leaflet map
  */
 initMap = () => {
-  //only try to initialize map if browser is online 
-  if (navigator.onLine) {
     fetchRestaurantFromURL((error, restaurant) => {
       if (error) { // Got an error!
-        console.error(error);
+        console.error(`error in initMap -> fetchRestaurantFromURL callback is ${error}`);
       } else {
-        self.newMap = L.map('map', {
-          center: [restaurant.latlng.lat, restaurant.latlng.lng],
-          zoom: 16,
-          scrollWheelZoom: false
-        });
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-          mapboxToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
-          maxZoom: 18,
-          attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-            '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-            'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-          id: 'mapbox.streets'
-        }).addTo(newMap);
+        //only try to initialize map if browser is online
+        if (navigator.onLine) {
+          self.newMap = L.map('map', {
+            center: [restaurant.latlng.lat, restaurant.latlng.lng],
+            zoom: 16,
+            scrollWheelZoom: false
+          });
+          L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
+            mapboxToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
+            maxZoom: 18,
+            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+              '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+              'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+            id: 'mapbox.streets'
+          }).addTo(newMap);
+        } // end if navigator is online
         fillBreadcrumb();
-        DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
-      }
-    });
-  }
-}
+        if (navigator.onLine) {
+          DBHelper.mapMarkerForRestaurant(self.restaurant, self.newMap);
+        }
+      } //end else
+    }); //end fetchRestaurantFromURL
+} // end initMap
 
 /* window.initMap = () => {
   fetchRestaurantFromURL((error, restaurant) => {
