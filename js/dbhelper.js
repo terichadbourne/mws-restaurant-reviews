@@ -1,6 +1,12 @@
 /**
  * Common database helper functions.
+ * Relies on Jake Archibald's IndexedDB Promised library
+ * (https://github.com/jakearchibald/idb)
  */
+
+// importScripts('js/idb.js') //import the IndexedDB Promised library
+console.log(`in dbhelper file and typeof idb is ${typeof idb}`)
+
 class DBHelper {
 
   /**

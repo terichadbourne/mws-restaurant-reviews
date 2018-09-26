@@ -15,7 +15,8 @@ let urlsToCache = [
   './js/.secrets.js',
   './css/styles.css',
   './img/icon-512.png',
-  './img/icon-192.png'
+  './img/icon-192.png',
+  './js/idb.js'
 ]
 
 // when service worker is installed
