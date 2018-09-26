@@ -22,25 +22,43 @@ class DBHelper {
    * Fetch all restaurants.
    */
   static fetchRestaurants(callback) {
-    let xhr = new XMLHttpRequest();
-    xhr.open('GET', DBHelper.DATABASE_URL);
-    xhr.onload = () => {
-      if (xhr.status === 200) { // Got a success response from server!
-        const restaurants = JSON.parse(xhr.responseText);
-        // const restaurants = json.restaurants; // an array
-        // will cache restaurants into IndexedDB in here
-        callback(null, restaurants);
-      } else { // Oops!. Got an error from server. (offline)
-        const error = (`Request failed. Returned status of ${xhr.status}`);
+    // NEW VERSION USING FETCH
+    fetch(DBHelper.DATABASE_URL)
+      .then(response => response.json())
+      .then(restaurants => {
+        console.log('restaurants JSON retrieved from live server: ', restaurants)
+        // will need to cache restaurants into IndexedDB in here
+        callback(null, restaurants)
+      })
+      .catch(error => {
+        console.log('error retrieving restaurant JSON from live server. Error is: ', error)
         // try to fetch restaurants from indexeddb,
-        // if indexeddb works
-        // use callback(null, restaurants) again (use diff name for idb)
+        //  if indexeddb works
+        //  use callback(null, restaurants) again (use diff name for idb)
         // if restaurants is undefined use the same callback as below
-        callback(error, null);
-      }
-    };
-    xhr.send();
-  }
+        callback(error, null)
+      })
+    }
+
+    // PREVIOUS VERSION WITH XML INSTEAD OF FETCH
+    // let xhr = new XMLHttpRequest();
+    // xhr.open('GET', DBHelper.DATABASE_URL);
+    // xhr.onload = () => {
+    //   if (xhr.status === 200) { // Got a success response from server!
+    //     const restaurants = JSON.parse(xhr.responseText);
+    //     // will cache restaurants into IndexedDB in here
+    //     callback(null, restaurants);
+    //   } else { // Oops!. Got an error from server. (offline)
+    //     const error = (`Request failed. Returned status of ${xhr.status}`);
+    //     // try to fetch restaurants from indexeddb,
+    //     // if indexeddb works
+    //     // use callback(null, restaurants) again (use diff name for idb)
+    //     // if restaurants is undefined use the same callback as below
+    //     callback(error, null);
+    //   }
+    // };
+    // xhr.send();
+
 
   /**
    * Fetch a restaurant by its ID.
