@@ -21,10 +21,15 @@ class DBHelper {
     xhr.onload = () => {
       if (xhr.status === 200) { // Got a success response from server!
         const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants;
+        const restaurants = json.restaurants; // an array
+        // will cache restaurants into IndexedDB in here
         callback(null, restaurants);
-      } else { // Oops!. Got an error from server.
+      } else { // Oops!. Got an error from server. (offline)
         const error = (`Request failed. Returned status of ${xhr.status}`);
+        // try to fetch restaurants from indexeddb,
+        // if indexeddb works
+        // use callback(null, restaurants) again (use diff name for idb)
+        // if restaurants is undefined use the same callback as below 
         callback(error, null);
       }
     };
