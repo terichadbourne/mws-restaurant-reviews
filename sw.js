@@ -13,7 +13,9 @@ let urlsToCache = [
   './js/dbhelper.js',
   './js/restaurant_info.js',
   './js/.secrets.js',
-  './css/styles.css'
+  './css/styles.css',
+  './img/icon-512.png',
+  './img/icon-192.png'
 ]
 
 // when service worker is installed
