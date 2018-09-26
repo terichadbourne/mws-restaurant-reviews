@@ -1,14 +1,31 @@
 # Udacity Mobile Web Specialist Certification Course
 
-## Restaurant Reviews Project Overview: Stage 1
+## Restaurant Reviews Project Overview: Stage 2
 
-This **Restaurant Reviews** project was created for Udacity's Mobile Web Specialist Nanodegree. My submission for Stage 1 of the 3-part project takes a static design that lacks accessibility and converts the design to be responsive on different sized displays and accessible for screen reader use. It also adds a service worker to begin the process of creating a seamless offline experience for my users.
+This **Restaurant Reviews** project was created for Udacity's Mobile Web Specialist Nanodegree. To see the state of the project before I implemented my own changes, you can visit [Udacity's starter code repo](https://github.com/udacity/mws-restaurant-stage-1).
 
-To see the state of the project before I implemented my own changes, you can visit [Udacity's starter code repo](https://github.com/udacity/mws-restaurant-stage-1).
+My submission for Stage 1 of the 3-part project took a static design that lacks accessibility and converts the design to be responsive on different sized displays and accessible for screen reader use. It also added a service worker to begin the process of creating a seamless offline experience for my users.
+
+Now in Stage 2, I'm accessing restaurant info and reviews from a server
+rather than storing it in a local JSON file. JSON responses from the server are cached using the IndexedDB API, and any data previously accessed while connected becomes available while offline.
 
 ### How to run this app
 
-1. Fork and clone this repository.
+#### Run the server
+
+1. Fork and clone the separate [server repo](https://github.com/terichadbourne/mws-restaurant-stage-2-server).
+2. Navigate into your server directory from the command line.
+3. Install project dependancies with `npm 1`.
+4. Install Sails.js globally with `npm i sails -g`.
+5. Start the server with `node server`.
+6. View all restaurant data at at the endpoint [http://localhost:1337/restaurants](http://localhost:1337/restaurants)
+7. View data from a specific restaurant at the endpoint http://localhost:1337/restaurants/<RESTAURANT_ID> (for example, [http://localhost:1337/restaurants/3](http://localhost:1337/restaurants/3))
+
+You're now ready to run the client app.
+
+#### Run the client
+
+1. Fork and clone [this repository](https://github.com/terichadbourne/mws-restaurant-reviews).
 
 2. This project uses [leafletjs](https://leafletjs.com/) with [Mapbox](https://www.mapbox.com/). Mapbox is free to use, and does not require any payment information. However, since tokens should be confidential, you will not find my active token in this repo and will need to get your own. After acquiring a token from [Mapbox](https://www.mapbox.com/), navigate to the root directory in the command line and create a hidden file to store it in. To do this, type `touch js/.secrets.js`. Be sure to match this filename exactly, as it is referenced in the code and prevented from accidental upload to GitHub by its inclusion in the `.gitignore` file.
 
