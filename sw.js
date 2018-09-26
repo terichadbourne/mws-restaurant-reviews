@@ -7,7 +7,6 @@ let urlsToCache = [
   './',
   './index.html',
   './restaurant.html',
-  './data/restaurants.json',
   './js/',
   './register_sw.js',
   './js/main.js',

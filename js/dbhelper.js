@@ -8,8 +8,8 @@ class DBHelper {
    * Change this to restaurants.json file location on your server.
    */
   static get DATABASE_URL() {
-    const port = 8000 // Change this to your server port
-    return `http://localhost:${port}/data/restaurants.json`;
+    const port = 1337 // Change this to your server port if different
+    return `http://localhost:${port}/restaurants`;
   }
 
   /**
@@ -20,8 +20,8 @@ class DBHelper {
     xhr.open('GET', DBHelper.DATABASE_URL);
     xhr.onload = () => {
       if (xhr.status === 200) { // Got a success response from server!
-        const json = JSON.parse(xhr.responseText);
-        const restaurants = json.restaurants; // an array
+        const restaurants = JSON.parse(xhr.responseText);
+        // const restaurants = json.restaurants; // an array
         // will cache restaurants into IndexedDB in here
         callback(null, restaurants);
       } else { // Oops!. Got an error from server. (offline)
@@ -29,7 +29,7 @@ class DBHelper {
         // try to fetch restaurants from indexeddb,
         // if indexeddb works
         // use callback(null, restaurants) again (use diff name for idb)
-        // if restaurants is undefined use the same callback as below 
+        // if restaurants is undefined use the same callback as below
         callback(error, null);
       }
     };
@@ -156,7 +156,7 @@ class DBHelper {
     takes either 'tile' or 'banner' as directory/type
    */
   static imageUrlForRestaurant(restaurant, type) {
-    return (`/img/${type}/${restaurant.photograph}`);
+    return (`/img/${type}/${restaurant.id}.jpg`);
   }
 
   /**
