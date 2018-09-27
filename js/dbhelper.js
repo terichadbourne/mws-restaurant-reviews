@@ -1,11 +1,11 @@
 /**
  * Common database helper functions.
  * Relies on Jake Archibald's IndexedDB Promised library
+ * (referenced here as `idb`)
  * (https://github.com/jakearchibald/idb)
  */
 
-// importScripts('js/idb.js') //import the IndexedDB Promised library
-console.log(`in dbhelper file and typeof idb is ${typeof idb}`)
+// console.log(`in dbhelper file and typeof idb is ${typeof idb}`)
 
 class DBHelper {
 
@@ -28,7 +28,8 @@ class DBHelper {
         case 0:
         case 1: {
           const restaurantStore = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
-          console.log('in openIDB and created object store and restaurantStore is ', restaurantStore)
+          console.log('in openIDB and restaurantStore is:')
+          console.log(restaurantStore)
           // restaurantStore.createIndex('restID', 'id');
         }
       } // end switch
@@ -49,7 +50,8 @@ class DBHelper {
       data.forEach(restaurant => {
         restaurantStore.put(restaurant)
       })
-      console.log('just stored restaurants and restaurantStore is ', restaurantStore)
+      console.log('in storeRestaurantsInDB and restaurantStore is:')
+      console.log(restaurantStore)
       return tx.complete;
     })
   }
@@ -60,7 +62,7 @@ class DBHelper {
    */
   static fetchAndStoreInIDB() {
     return fetch(DBHelper.DATABASE_URL)
-      .then(response => response.json)
+      .then(response => response.json())
       .then(restaurants => {
         console.log('restaurants JSON retrieved from live server: ', restaurants)
         DBHelper.storeRestaurantsInIDB(restaurants)
@@ -76,6 +78,8 @@ class DBHelper {
       .then(db => {
         if(!db) return;
         var restaurantStore = db.transaction('restaurants').objectStore('restaurants');
+        console.log('in getRestaurantsFromIDB and restaurantStore is:')
+        console.log(restaurantStore)
         return restaurantStore.getAll();
       })
    }
@@ -91,9 +95,13 @@ class DBHelper {
      .then(restaurants => {
        // if that worked
        if (restaurants.length) {
+         console.log('in fetchRestaurants and successfully found records in IDB:')
+         console.log(restaurants)
          return Promise.resolve(restaurants);
        // if nothing was in IDB, fetch from server and save to IDB
        } else {
+         console.log("in fetchRestaurants and couldn't find records in IDB")
+         console.log("about to run fetchAndStoreInIDB")
          return DBHelper.fetchAndStoreInIDB();
        }
      })
@@ -164,21 +172,15 @@ class DBHelper {
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
-        console.log('in fetchRestaurantByCuisineAndNeighborhood and had error')
         callback(error, null);
       } else {
-        console.log('in fetchRestaurantByCuisineAndNeighborhood w/ success')
         let results = restaurants
-        console.log('in fetchRestaurantByCuisineAndNeighborhood and results before filter:')
-        console.log(results)
         if (cuisine != 'all') { // filter by cuisine
           results = results.filter(r => r.cuisine_type == cuisine);
         }
         if (neighborhood != 'all') { // filter by neighborhood
           results = results.filter(r => r.neighborhood == neighborhood);
         }
-        console.log('in fetchRestaurantByCuisineAndNeighborhood and results after filter:')
-        console.log(results)
         callback(null, results);
       }
     });
