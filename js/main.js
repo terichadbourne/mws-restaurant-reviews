@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
  */
 fetchNeighborhoods = () => {
   DBHelper.fetchNeighborhoods((error, neighborhoods) => {
+    console.log('in fetchNeighborhoods')
     if (error) { // Got an error
       console.error(error);
     } else {
@@ -138,6 +139,8 @@ updateRestaurants = () => {
  * Clear current restaurants, their HTML and remove their map markers.
  */
 resetRestaurants = (restaurants) => {
+  console.log('in resetRestaurants and restauarants passed in as: ')
+  console.log(restaurants)
   // Remove all restaurants
   self.restaurants = [];
   const ul = document.getElementById('restaurants-list');
