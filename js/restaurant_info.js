@@ -81,6 +81,22 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
   const name = document.getElementById('restaurant-name');
   name.innerHTML = restaurant.name;
 
+  const favorite = document.getElementsByClassName('favorite-button')[0]
+  favorite.id = "favorite-" + self.restaurant.id
+  favorite.setAttribute('data-id', self.restaurant.id)
+  // TODO: Check that this works w/ actual JSON from server
+  // favorite.setAttribute('data-favorite', (restaurant.is_favorite || "false"));
+  if (!restaurant.is_favorite || restaurant.is_favorite === "false") {
+    favorite.setAttribute('data-favorite', "false");
+    favorite.setAttribute('aria-label', "Add to favorites")
+  } else {
+    favorite.setAttribute('data-favorite', "true");
+    favorite.setAttribute('aria-label', "Remove from favorites")
+  }
+  favorite.onclick = function () {
+    DBHelper.toggleFavorite(favorite.getAttribute("data-id"), favorite.getAttribute("data-favorite"));
+  }
+
   const address = document.getElementById('restaurant-address');
   address.innerHTML = restaurant.address;
 
