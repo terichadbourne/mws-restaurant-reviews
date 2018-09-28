@@ -188,6 +188,26 @@ createRestaurantHTML = (restaurant) => {
   // more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more)
 
+  const favorite = document.createElement('button');
+  favorite.id = "favorite-" + restaurant.id;
+  favorite.classList = "favorite-button";
+  favorite.setAttribute('data-id', restaurant.id);
+  // TODO: Check that this works w/ actual JSON from server
+  // favorite.setAttribute('data-favorite', (restaurant.is_favorite || "false"));
+  if (!restaurant.is_favorite || restaurant.is_favorite === "false") {
+    favorite.setAttribute('data-favorite', "false");
+    favorite.setAttribute('aria-label', "Add to favorites")
+  } else {
+    favorite.setAttribute('data-favorite', "true");
+    favorite.setAttribute('aria-label', "Remove from favorites")
+  }
+  favorite.innerHTML = "&#10084;";
+  // when clicked, call toggleFavorite and pass in restaurant ID and old state
+  favorite.onclick = function () {
+    DBHelper.toggleFavorite(favorite.getAttribute("data-id"), favorite.getAttribute("data-favorite"));
+  }
+  li.append(favorite);
+
   return li
 }
 

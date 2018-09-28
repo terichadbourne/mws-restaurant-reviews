@@ -251,4 +251,20 @@ class DBHelper {
     return marker;
   }
 
+  /**
+   * Toggle favorite status
+   */
+   static toggleFavorite(restaurantId, oldState) {
+     // update local and remote database first, then update button styling...
+    const favoriteButton = document.getElementById("favorite-" + restaurantId)
+    if (oldState === "true") {
+      favoriteButton.setAttribute('data-favorite', "false")
+      favoriteButton.setAttribute('aria-label', "Add to favorites")
+    } else {
+      favoriteButton.setAttribute('data-favorite', "true")
+      favoriteButton.setAttribute('aria-label', "Remove from favorites")
+    }
+    console.log(' new state is ', favoriteButton.getAttribute('data-favorite'))
+  }
+
 } // end class DBHelper
