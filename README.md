@@ -1,25 +1,27 @@
 # Udacity Mobile Web Specialist Certification Course
 
-## Restaurant Reviews Project Overview: Stage 2
+## Restaurant Reviews Project Overview: Stage 3
 
 This **Restaurant Reviews** project was created for Udacity's Mobile Web Specialist Nanodegree. To see the state of the project before I implemented my own changes, you can visit [Udacity's starter code repo](https://github.com/udacity/mws-restaurant-stage-1).
 
-My submission for Stage 1 of the 3-part project took a static design that lacks accessibility and converts the design to be responsive on different sized displays and accessible for screen reader use. It also added a service worker to begin the process of creating a seamless offline experience for my users.
+My submission for [Stage 1](https://github.com/terichadbourne/mws-restaurant-reviews/tree/stage-1-final) of the 3-part project took a static design that lacks accessibility and converts the design to be responsive on different sized displays and accessible for screen reader use. It also added a service worker to begin the process of creating a seamless offline experience for my users.
 
-Now in Stage 2, I'm accessing restaurant info and reviews from a server
-rather than storing it in a local JSON file. JSON responses from the server are cached using the IndexedDB API, and any data previously accessed while connected becomes available while offline.
+In [Stage 2](https://github.com/terichadbourne/mws-restaurant-reviews/tree/stage-2-final), I accessed restaurant info and reviews from a server rather
+than storing it in a local JSON file. JSON responses from the server were cached using the IndexedDB API, and any data previously accessed while connected was made available while offline.
+
+Now in Stage 3, I'm accessing a new server which delivers restaurant info
+separately from reviews. Users can now mark restaurants as favorites, with the database updated as needed. They can also now add their own restaurant reviews, even if offline, and those reviews will be sent to the server when a connection is available.
 
 ### How to run this app
 
 #### Run the server
 
-1. Fork and clone the separate [server repo](https://github.com/terichadbourne/mws-restaurant-stage-2-server).
+1. Fork and clone the separate [server repo](https://github.com/terichadbourne/mws-restaurant-stage-3-server).
 2. Navigate into your server directory from the command line.
-3. Install project dependancies with `npm 1`.
+3. Install project dependancies with `npm i`.
 4. Install Sails.js globally with `npm i sails -g`.
 5. Start the server with `node server`.
-6. View all restaurant data at at the endpoint [http://localhost:1337/restaurants](http://localhost:1337/restaurants)
-7. View data from a specific restaurant at the endpoint http://localhost:1337/restaurants/<RESTAURANT_ID> (for example, [http://localhost:1337/restaurants/3](http://localhost:1337/restaurants/3))
+6. You can find a detailed [list of endpoints](https://github.com/terichadbourne/mws-restaurant-stage-3-server/blob/master/README.md) made available by the API in the README of the server repo. 
 
 You're now ready to run the client app.
 
