@@ -18,6 +18,15 @@ class DBHelper {
     return `http://localhost:${port}/restaurants`;
   }
 
+  /**
+   * URL for reviews for a specific restaurant
+   * have to append restaurant id # when using
+   */
+  static get DATABASE_REVIEWS_URL() {
+    const port = 1337 // Change this to your server port if different
+    return `http://localhost:${port}/reviews/?restaurant_id=`;
+  }
+
 
   /**
    * Open IndexedDB and upgrade if needed.
@@ -32,6 +41,13 @@ class DBHelper {
           console.log(restaurantStore)
           // restaurantStore.createIndex('restID', 'id');
         }
+        // case 2: {
+        //   const reviewStore = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
+        //   console.log('in openIDB and reviewStore is:')
+        //   console.log(reviewStore)
+        //   // reviewStore.createIndex('reviewID', 'id');
+        //   reviewStore.createIndex('restaurant', 'restaurant_id')
+        // }
       } // end switch
     })
   }
@@ -255,16 +271,35 @@ class DBHelper {
    * Toggle favorite status
    */
    static toggleFavorite(restaurantId, oldState) {
-     // update local and remote database first, then update button styling...
+     let newStateString, newStateBoolean, newAriaLabel
+     if (oldState === "true") {
+       newStateString = "false"
+       newStateBoolean = false
+       newAriaLabel = "Add to favorites"
+     } else {
+       newStateString = "true"
+       newStateBoolean = true
+       newAriaLabel = "Remove from favorites"
+     }
+    // update local and remote database first
+    DBHelper.updateFavoriteInIDB(restaurantId, newStateBoolean)
+    // then update button styling
     const favoriteButton = document.getElementById("favorite-" + restaurantId)
-    if (oldState === "true") {
-      favoriteButton.setAttribute('data-favorite', "false")
-      favoriteButton.setAttribute('aria-label', "Add to favorites")
-    } else {
-      favoriteButton.setAttribute('data-favorite', "true")
-      favoriteButton.setAttribute('aria-label', "Remove from favorites")
-    }
-    console.log(' new state is ', favoriteButton.getAttribute('data-favorite'))
+    favoriteButton.setAttribute('data-favorite', newStateString)
+    favoriteButton.setAttribute('aria-label', newAriaLabel)
   }
+
+  /**
+   * Update favorite status in IDB
+   */
+
+   static updateFavoriteInIDB(restaurantId, newStateBoolean) {
+     console.log(typeof newStateBoolean)
+     console.log(`attempting to set idb state of restaurant #${restaurantId} to ${newStateBoolean}`)
+     //update favorite status in remote DB
+     fetch (`${DBHelper.DATABASE_URL}/${restaurantId}/?is_favorite=${newStateBoolean}`, {
+       method: 'PUT'
+     })
+   }
 
 } // end class DBHelper

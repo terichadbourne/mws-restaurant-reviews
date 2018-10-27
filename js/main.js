@@ -192,7 +192,6 @@ createRestaurantHTML = (restaurant) => {
   favorite.id = "favorite-" + restaurant.id;
   favorite.classList = "favorite-button";
   favorite.setAttribute('data-id', restaurant.id);
-  // TODO: Check that this works w/ actual JSON from server
   // favorite.setAttribute('data-favorite', (restaurant.is_favorite || "false"));
   if (!restaurant.is_favorite || restaurant.is_favorite === "false") {
     favorite.setAttribute('data-favorite', "false");
