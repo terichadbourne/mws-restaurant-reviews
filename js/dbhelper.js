@@ -270,7 +270,8 @@ class DBHelper {
   /**
    * Toggle favorite status
    */
-   static toggleFavorite(restaurantId, oldState) {
+   static toggleFavorite(restaurantIdString, oldState) {
+     let restaurantId = parseInt(restaurantIdString)
      let newStateString, newStateBoolean, newAriaLabel
      if (oldState === "true") {
        newStateString = "false"
@@ -282,7 +283,7 @@ class DBHelper {
        newAriaLabel = "Remove from favorites"
      }
     // update local and remote database first
-    DBHelper.updateFavoriteInIDB(restaurantId, newStateBoolean)
+    DBHelper.updateFavoriteInIDB(restaurantId, newStateBoolean, newStateString)
     // then update button styling
     const favoriteButton = document.getElementById("favorite-" + restaurantId)
     favoriteButton.setAttribute('data-favorite', newStateString)
@@ -293,13 +294,40 @@ class DBHelper {
    * Update favorite status in IDB
    */
 
-   static updateFavoriteInIDB(restaurantId, newStateBoolean) {
+   static updateFavoriteInIDB(restaurantId, newStateBoolean, newStateString) {
      console.log(typeof newStateBoolean)
      console.log(`attempting to set idb state of restaurant #${restaurantId} to ${newStateBoolean}`)
      //update favorite status in remote DB
      fetch (`${DBHelper.DATABASE_URL}/${restaurantId}/?is_favorite=${newStateBoolean}`, {
        method: 'PUT'
      })
+      .then(response => {
+        console.log('updated favorite in remote DB, now trying IDB')
+        return DBHelper.openIDB().then(db => {
+          if(!db) return;
+          const tx = db.transaction('restaurants', 'readwrite');
+          const restaurantStore = tx.objectStore('restaurants');
+          console.log('IDB restaurantStore before updating is: ', restaurantStore)
+          //find relevant restaurant in IDB
+          console.log(typeof restaurantId)
+          restaurantStore.get(restaurantId)
+            // update is_Favorite in IDB and save record
+            .then(restaurant => {
+              console.log('IDB restaurant before updating is: ')
+              console.log(restaurant)
+              restaurant.is_favorite = newStateString
+              restaurantStore.put(restaurant)
+              console.log('updated to: ')
+              console.log(restaurant)
+            })
+          })
+          console.log('just updated favorite status and restaurantStore is:')
+          console.log(restaurantStore)
+          return tx.complete;
+        })
+      .catch(error => {
+        console.log('error updating favorite in remote DB is: ', error)
+      })
    }
 
 } // end class DBHelper
