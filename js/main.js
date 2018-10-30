@@ -14,9 +14,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
   } else {
     mapDiv.classList.remove("offline")
   }
-  initMap();
 
+  // refactored code on page load to remove multiple fetches from server
   DBHelper.fetchRestaurants()
+    .then(initMap)
+    .then(updateRestaurants)
     .then(fillNeighborhoodsHTML)
     .then(fillCuisinesHTML)
 });
@@ -88,7 +90,7 @@ fillCuisinesHTML = (restaurants) => {
 /**
  * Initialize leaflet map, called from HTML.
  */
-initMap = () => {
+initMap = (restaurants) => {
   // only try to create a map if browser is online
   if (navigator.onLine) {
     self.newMap = L.map('map', {
@@ -106,33 +108,46 @@ initMap = () => {
     }).addTo(newMap);
     mapDiv.classList.remove("offline") // set map div class to reflect online status
   }
-
-  updateRestaurants();
+  return restaurants // to make promise chain work
 }
 
 
 /**
  * Update page and map for current restaurants.
+ * If you pass in a list of restaurants (on page load), it doesn't fetch.
+ * If you don't, it does.
+ * The idea for this approach came from @AlexandroPerez
+ * (https://github.com/AlexandroPerez/restaviews) but I've implemented it
+ * differently.
  */
-updateRestaurants = () => {
-  console.log('IN updateRestaurants')
-  const cSelect = document.getElementById('cuisines-select');
-  const nSelect = document.getElementById('neighborhoods-select');
+updateRestaurants = (restaurants = null) => {
+  // if restaurants passed in (on page load), skip the fetch
+  if (restaurants) {
+    console.log(`IN updateRestaurants on first load so won't re-fetch`)
+    resetRestaurants(restaurants);
+    fillRestaurantsHTML();
+    return restaurants // to make promise chain work
+  } else {
+    console.log('IN updateRestaurants on subsequent load so will fetch and filter')
+    const cSelect = document.getElementById('cuisines-select');
+    const nSelect = document.getElementById('neighborhoods-select');
 
-  const cIndex = cSelect.selectedIndex;
-  const nIndex = nSelect.selectedIndex;
+    const cIndex = cSelect.selectedIndex;
+    const nIndex = nSelect.selectedIndex;
 
-  const cuisine = cSelect[cIndex].value;
-  const neighborhood = nSelect[nIndex].value;
+    const cuisine = cSelect[cIndex].value;
+    const neighborhood = nSelect[nIndex].value;
 
-  DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      resetRestaurants(restaurants);
-      fillRestaurantsHTML();
-    }
-  })
+    DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
+      if (error) { // Got an error!
+        console.error(error);
+      } else {
+        resetRestaurants(restaurants);
+        fillRestaurantsHTML();
+        return restaurants // to make promise chain work
+      }
+    })
+  } // end else
 }
 
 /**
