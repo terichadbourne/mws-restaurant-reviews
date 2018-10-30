@@ -101,6 +101,8 @@ class DBHelper {
   /**
    * Fetch all restaurants.
    */
+   // TODO: If it finds records in IDB, it should also check live server for
+   // updated records
   static fetchRestaurants(callback) {
     // NEW VERSION USING FETCH
     // try to get restaurants from IDB first
@@ -134,6 +136,9 @@ class DBHelper {
   /**
    * Fetch a restaurant by its ID.
    */
+   // TODO: Save fetched server results to IDB while online
+   // TODO:  Make this work from IDB while offline
+
   static fetchRestaurantById(id, callback) {
     // fetch all restaurants with proper error handling.
     DBHelper.fetchRestaurants((error, restaurants) => {
@@ -151,45 +156,7 @@ class DBHelper {
   }
 
   /**
-   * NEVER USED
-   * Fetch restaurants by a cuisine type with proper error handling.
-   */
-  // static fetchRestaurantByCuisine(cuisine, callback) {
-  //   console.log('IN fetchRestaurantByCuisine')
-  //   // Fetch all restaurants  with proper error handling
-  //   DBHelper.fetchRestaurants((error, restaurants) => {
-  //     if (error) {
-  //       callback(error, null);
-  //     } else {
-  //       // Filter restaurants to have only given cuisine type
-  //       const results = restaurants.filter(r => r.cuisine_type == cuisine);
-  //       callback(null, results);
-  //     }
-  //   });
-  // }
-
-
-
-  /**
-   * NEVER USED
-   * Fetch restaurants by a neighborhood with proper error handling.
-   */
-  // static fetchRestaurantByNeighborhood(neighborhood, callback) {
-  //   console.log('IN fetchRestaurantByNeighborhood')
-  //   // Fetch all restaurants
-  //   DBHelper.fetchRestaurants((error, restaurants) => {
-  //     if (error) {
-  //       callback(error, null);
-  //     } else {
-  //       // Filter restaurants to have only given neighborhood
-  //       const results = restaurants.filter(r => r.neighborhood == neighborhood);
-  //       callback(null, results);
-  //     }
-  //   });
-  // }
-
-  /**
-   * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
+   * Fetch and filter restaurants by a cuisine and a neighborhood with proper error handling.
    */
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
     console.log('IN fetchRestaurantByCuisineAndNeighborhood')
@@ -209,62 +176,6 @@ class DBHelper {
       }
     });
   }
-
-
-
-  /**
-   * REPLACED FUNCTIONALITY IN uniqueNeighborhoods
-   * Fetch all neighborhoods with proper error handling.
-   */
-  // static fetchNeighborhoods(callback) {
-  //   console.log('IN fetchNeighborhoods')
-  //   // Fetch all restaurants
-  //   DBHelper.fetchRestaurants((error, restaurants) => {
-  //     if (error) {
-  //       callback(error, null);
-  //     } else {
-  //       // Get all neighborhoods from all restaurants
-  //       const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
-  //       // Remove duplicates from neighborhoods
-  //       const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
-  //       callback(null, uniqueNeighborhoods);
-  //     }
-  //   });
-  // }
-
-  static uniqueNeighborhoods(restaurants) {
-    const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
-    // Remove duplicates from neighborhoods
-    const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
-    return uniqueNeighborhoods;
-  }
-
-  static uniqueCuisines(restaurants) {
-    const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
-    // Remove duplicates from cuisines
-    const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
-    return uniqueCuisines;
-  }
-
-  /**
-   * REPLACED FUNCTIONALITY IN uniqueCuisines
-   * Fetch all cuisines with proper error handling.
-   */
-  // static fetchCuisines(callback) {
-  //   console.log('IN fetchCuisines')
-  //   // Fetch all restaurants
-  //   DBHelper.fetchRestaurants((error, restaurants) => {
-  //     if (error) {
-  //       callback(error, null);
-  //     } else {
-  //       // Get all cuisines from all restaurants
-  //       const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
-  //       // Remove duplicates from cuisines
-  //       const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
-  //       callback(null, uniqueCuisines);
-  //     }
-  //   });
-  // }
 
   /**
    * Restaurant page URL.
@@ -321,7 +232,8 @@ class DBHelper {
   /**
    * Update favorite status in IDB
    */
-
+   // TODO: Change order so it saves to IDB, then tries to sync. If offline,
+   // queue later sync.
    static updateFavoriteInIDB(restaurantId, newStateBoolean, newStateString) {
      console.log(`attempting to set idb state of restaurant #${restaurantId} to ${newStateBoolean}`)
      //update favorite status in remote DB

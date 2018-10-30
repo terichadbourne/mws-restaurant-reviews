@@ -24,29 +24,18 @@ document.addEventListener('DOMContentLoaded', (event) => {
 });
 
 /**
-  * Was only used to call the fetchNeighborhoods in dbhelper.js, which is no longer USED
-  * this function appears not to be called anywhere now
- * Fetch all neighborhoods and set their HTML.
- */
-// fetchNeighborhoods = () => {
-//   console.log('IN fetchNeighborhoods')
-//   DBHelper.fetchNeighborhoods((error, neighborhoods) => {
-//     if (error) { // Got an error
-//       console.error(error);
-//     } else {
-//       self.neighborhoods = neighborhoods;
-//       fillNeighborhoodsHTML();
-//     }
-//   });
-// }
-
-/**
  * Set neighborhoods HTML.
+ * Takes a list of restaurants and filters it down to unique neighborhoods to
+ * display in select options. Incorporates the filtering functionality once
+ * provided in `fetchNeighborhoods` (now removed), but doesn't make a new fetch.
  */
 fillNeighborhoodsHTML = (restaurants) => {
-  const neighborhoods = DBHelper.uniqueNeighborhoods(restaurants);
+  //const neighborhoods = DBHelper.uniqueNeighborhoods(restaurants);
+  const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
+  // Remove duplicates from neighborhoods
+  const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
   const select = document.getElementById('neighborhoods-select');
-  neighborhoods.forEach(neighborhood => {
+  uniqueNeighborhoods.forEach(neighborhood => {
     const option = document.createElement('option');
     option.innerHTML = neighborhood;
     option.value = neighborhood;
@@ -55,30 +44,20 @@ fillNeighborhoodsHTML = (restaurants) => {
   return restaurants;
 }
 
-/**
- * Was only used to call the fetchCusines in dbhelper.js, which is no longer USED
- * this function appears not to be called anywhere now
- * Fetch all cuisines and set their HTML.
- */
-// fetchCuisines = () => {
-//   console.log('IN fetchCuisines')
-//   DBHelper.fetchCuisines((error, cuisines) => {
-//     if (error) { // Got an error!
-//       console.error(error);
-//     } else {
-//       self.cuisines = cuisines;
-//       fillCuisinesHTML();
-//     }
-//   });
-// }
 
 /**
  * Set cuisines HTML.
+ * Takes a list of restaurants and filters it down to unique cuisines to
+ * display in select options. Incorporates the filtering functionality once
+ * provided in `fetchCuisines` (now removed), but doesn't make a new fetch.
  */
 fillCuisinesHTML = (restaurants) => {
-  const cuisines = DBHelper.uniqueCuisines(restaurants);
+  // const cuisines = DBHelper.uniqueCuisines(restaurants);
+  const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
+  // Remove duplicates from cuisines
+  const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
   const select = document.getElementById('cuisines-select');
-  cuisines.forEach(cuisine => {
+  uniqueCuisines.forEach(cuisine => {
     const option = document.createElement('option');
     option.innerHTML = cuisine;
     option.value = cuisine;
@@ -116,7 +95,7 @@ initMap = (restaurants) => {
  * Update page and map for current restaurants.
  * If you pass in a list of restaurants (on page load), it doesn't fetch.
  * If you don't, it does.
- * The idea for this approach came from @AlexandroPerez
+ * The idea for this multi-use approach came from @AlexandroPerez
  * (https://github.com/AlexandroPerez/restaviews) but I've implemented it
  * differently.
  */
