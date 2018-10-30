@@ -15,28 +15,34 @@ document.addEventListener('DOMContentLoaded', (event) => {
     mapDiv.classList.remove("offline")
   }
   initMap();
-  fetchNeighborhoods();
-  fetchCuisines();
+
+  DBHelper.fetchRestaurants()
+    .then(fillNeighborhoodsHTML)
+    .then(fillCuisinesHTML)
 });
 
 /**
+  * Was only used to call the fetchNeighborhoods in dbhelper.js, which is no longer USED
+  * this function appears not to be called anywhere now
  * Fetch all neighborhoods and set their HTML.
  */
-fetchNeighborhoods = () => {
-  DBHelper.fetchNeighborhoods((error, neighborhoods) => {
-    if (error) { // Got an error
-      console.error(error);
-    } else {
-      self.neighborhoods = neighborhoods;
-      fillNeighborhoodsHTML();
-    }
-  });
-}
+// fetchNeighborhoods = () => {
+//   console.log('IN fetchNeighborhoods')
+//   DBHelper.fetchNeighborhoods((error, neighborhoods) => {
+//     if (error) { // Got an error
+//       console.error(error);
+//     } else {
+//       self.neighborhoods = neighborhoods;
+//       fillNeighborhoodsHTML();
+//     }
+//   });
+// }
 
 /**
  * Set neighborhoods HTML.
  */
-fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
+fillNeighborhoodsHTML = (restaurants) => {
+  const neighborhoods = DBHelper.uniqueNeighborhoods(restaurants);
   const select = document.getElementById('neighborhoods-select');
   neighborhoods.forEach(neighborhood => {
     const option = document.createElement('option');
@@ -44,34 +50,39 @@ fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
     option.value = neighborhood;
     select.append(option);
   });
+  return restaurants;
 }
 
 /**
+ * Was only used to call the fetchCusines in dbhelper.js, which is no longer USED
+ * this function appears not to be called anywhere now
  * Fetch all cuisines and set their HTML.
  */
-fetchCuisines = () => {
-  DBHelper.fetchCuisines((error, cuisines) => {
-    if (error) { // Got an error!
-      console.error(error);
-    } else {
-      self.cuisines = cuisines;
-      fillCuisinesHTML();
-    }
-  });
-}
+// fetchCuisines = () => {
+//   console.log('IN fetchCuisines')
+//   DBHelper.fetchCuisines((error, cuisines) => {
+//     if (error) { // Got an error!
+//       console.error(error);
+//     } else {
+//       self.cuisines = cuisines;
+//       fillCuisinesHTML();
+//     }
+//   });
+// }
 
 /**
  * Set cuisines HTML.
  */
-fillCuisinesHTML = (cuisines = self.cuisines) => {
+fillCuisinesHTML = (restaurants) => {
+  const cuisines = DBHelper.uniqueCuisines(restaurants);
   const select = document.getElementById('cuisines-select');
-
   cuisines.forEach(cuisine => {
     const option = document.createElement('option');
     option.innerHTML = cuisine;
     option.value = cuisine;
     select.append(option);
   });
+  return restaurants;
 }
 
 /**
@@ -104,6 +115,7 @@ initMap = () => {
  * Update page and map for current restaurants.
  */
 updateRestaurants = () => {
+  console.log('IN updateRestaurants')
   const cSelect = document.getElementById('cuisines-select');
   const nSelect = document.getElementById('neighborhoods-select');
 

@@ -37,8 +37,7 @@ class DBHelper {
         case 0:
         case 1: {
           const restaurantStore = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
-          console.log('in openIDB and restaurantStore is:')
-          console.log(restaurantStore)
+          console.log('finishing in openIDB')
           // restaurantStore.createIndex('restID', 'id');
         }
         // case 2: {
@@ -66,8 +65,7 @@ class DBHelper {
       data.forEach(restaurant => {
         restaurantStore.put(restaurant)
       })
-      console.log('in storeRestaurantsInDB and restaurantStore is:')
-      console.log(restaurantStore)
+      console.log('finishing in storeRestaurantsInIDB')
       return tx.complete;
     })
   }
@@ -94,8 +92,7 @@ class DBHelper {
       .then(db => {
         if(!db) return;
         var restaurantStore = db.transaction('restaurants').objectStore('restaurants');
-        console.log('in getRestaurantsFromIDB and restaurantStore is:')
-        console.log(restaurantStore)
+        console.log('finishing in getRestaurantsFromIDB')
         return restaurantStore.getAll();
       })
    }
@@ -122,7 +119,11 @@ class DBHelper {
        }
      })
       .then(restaurants => {
-        callback(null, restaurants)
+        if (callback) {
+          callback(null, restaurants)
+        } else {
+          return restaurants
+        }
       })
       .catch(error => {
         console.log('error retrieving restaurant JSON from live server. Error is: ', error)
@@ -150,41 +151,48 @@ class DBHelper {
   }
 
   /**
+   * NEVER USED
    * Fetch restaurants by a cuisine type with proper error handling.
    */
-  static fetchRestaurantByCuisine(cuisine, callback) {
-    // Fetch all restaurants  with proper error handling
-    DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        // Filter restaurants to have only given cuisine type
-        const results = restaurants.filter(r => r.cuisine_type == cuisine);
-        callback(null, results);
-      }
-    });
-  }
+  // static fetchRestaurantByCuisine(cuisine, callback) {
+  //   console.log('IN fetchRestaurantByCuisine')
+  //   // Fetch all restaurants  with proper error handling
+  //   DBHelper.fetchRestaurants((error, restaurants) => {
+  //     if (error) {
+  //       callback(error, null);
+  //     } else {
+  //       // Filter restaurants to have only given cuisine type
+  //       const results = restaurants.filter(r => r.cuisine_type == cuisine);
+  //       callback(null, results);
+  //     }
+  //   });
+  // }
+
+
 
   /**
+   * NEVER USED
    * Fetch restaurants by a neighborhood with proper error handling.
    */
-  static fetchRestaurantByNeighborhood(neighborhood, callback) {
-    // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        // Filter restaurants to have only given neighborhood
-        const results = restaurants.filter(r => r.neighborhood == neighborhood);
-        callback(null, results);
-      }
-    });
-  }
+  // static fetchRestaurantByNeighborhood(neighborhood, callback) {
+  //   console.log('IN fetchRestaurantByNeighborhood')
+  //   // Fetch all restaurants
+  //   DBHelper.fetchRestaurants((error, restaurants) => {
+  //     if (error) {
+  //       callback(error, null);
+  //     } else {
+  //       // Filter restaurants to have only given neighborhood
+  //       const results = restaurants.filter(r => r.neighborhood == neighborhood);
+  //       callback(null, results);
+  //     }
+  //   });
+  // }
 
   /**
    * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
    */
   static fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, callback) {
+    console.log('IN fetchRestaurantByCuisineAndNeighborhood')
     // Fetch all restaurants
     DBHelper.fetchRestaurants((error, restaurants) => {
       if (error) {
@@ -202,41 +210,61 @@ class DBHelper {
     });
   }
 
+
+
   /**
+   * REPLACED FUNCTIONALITY IN uniqueNeighborhoods
    * Fetch all neighborhoods with proper error handling.
    */
-  static fetchNeighborhoods(callback) {
-    // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        // Get all neighborhoods from all restaurants
-        const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
-        // Remove duplicates from neighborhoods
-        const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
-        callback(null, uniqueNeighborhoods);
-      }
-    });
+  // static fetchNeighborhoods(callback) {
+  //   console.log('IN fetchNeighborhoods')
+  //   // Fetch all restaurants
+  //   DBHelper.fetchRestaurants((error, restaurants) => {
+  //     if (error) {
+  //       callback(error, null);
+  //     } else {
+  //       // Get all neighborhoods from all restaurants
+  //       const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood)
+  //       // Remove duplicates from neighborhoods
+  //       const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i)
+  //       callback(null, uniqueNeighborhoods);
+  //     }
+  //   });
+  // }
+
+  static uniqueNeighborhoods(restaurants) {
+    const neighborhoods = restaurants.map((v, i) => restaurants[i].neighborhood);
+    // Remove duplicates from neighborhoods
+    const uniqueNeighborhoods = neighborhoods.filter((v, i) => neighborhoods.indexOf(v) == i);
+    return uniqueNeighborhoods;
+  }
+
+  static uniqueCuisines(restaurants) {
+    const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type);
+    // Remove duplicates from cuisines
+    const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i);
+    return uniqueCuisines;
   }
 
   /**
+   * REPLACED FUNCTIONALITY IN uniqueCuisines
    * Fetch all cuisines with proper error handling.
    */
-  static fetchCuisines(callback) {
-    // Fetch all restaurants
-    DBHelper.fetchRestaurants((error, restaurants) => {
-      if (error) {
-        callback(error, null);
-      } else {
-        // Get all cuisines from all restaurants
-        const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
-        // Remove duplicates from cuisines
-        const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
-        callback(null, uniqueCuisines);
-      }
-    });
-  }
+  // static fetchCuisines(callback) {
+  //   console.log('IN fetchCuisines')
+  //   // Fetch all restaurants
+  //   DBHelper.fetchRestaurants((error, restaurants) => {
+  //     if (error) {
+  //       callback(error, null);
+  //     } else {
+  //       // Get all cuisines from all restaurants
+  //       const cuisines = restaurants.map((v, i) => restaurants[i].cuisine_type)
+  //       // Remove duplicates from cuisines
+  //       const uniqueCuisines = cuisines.filter((v, i) => cuisines.indexOf(v) == i)
+  //       callback(null, uniqueCuisines);
+  //     }
+  //   });
+  // }
 
   /**
    * Restaurant page URL.
@@ -295,7 +323,6 @@ class DBHelper {
    */
 
    static updateFavoriteInIDB(restaurantId, newStateBoolean, newStateString) {
-     console.log(typeof newStateBoolean)
      console.log(`attempting to set idb state of restaurant #${restaurantId} to ${newStateBoolean}`)
      //update favorite status in remote DB
      fetch (`${DBHelper.DATABASE_URL}/${restaurantId}/?is_favorite=${newStateBoolean}`, {
@@ -307,22 +334,19 @@ class DBHelper {
           if(!db) return;
           const tx = db.transaction('restaurants', 'readwrite');
           const restaurantStore = tx.objectStore('restaurants');
-          console.log('IDB restaurantStore before updating is: ', restaurantStore)
           //find relevant restaurant in IDB
-          console.log(typeof restaurantId)
           restaurantStore.get(restaurantId)
             // update is_Favorite in IDB and save record
             .then(restaurant => {
-              console.log('IDB restaurant before updating is: ')
-              console.log(restaurant)
+              // console.log('IDB restaurant before updating is: ')
+              // console.log(restaurant)
               restaurant.is_favorite = newStateString
               restaurantStore.put(restaurant)
-              console.log('updated to: ')
-              console.log(restaurant)
+              // console.log('updated to: ')
+              // console.log(restaurant)
+              console.log('updated favorite status in IDB')
             })
           })
-          console.log('just updated favorite status and restaurantStore is:')
-          console.log(restaurantStore)
           return tx.complete;
         })
       .catch(error => {
