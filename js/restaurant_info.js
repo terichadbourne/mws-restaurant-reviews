@@ -181,12 +181,11 @@ displayReviewForm = (restaurantId) => {
 
   let p = document.createElement('p')
   let label = document.createElement('label')
-  label.for = "name"
+  label.setAttribute('for', 'review-name')
   label.innerHTML = 'Your Name:'
   p.append(label)
   const name = document.createElement('input')
   name.id = 'review-name'
-  name.name = 'name'
   name.setAttribute('type', 'text')
   name.setAttribute('required', true)
   p.appendChild(name)
@@ -194,12 +193,11 @@ displayReviewForm = (restaurantId) => {
 
   p = document.createElement('p')
   label = document.createElement('label')
-  label.for = "review-rating"
+  label.setAttribute('for', 'review-rating')
   label.innerHTML = 'Review (1-5):'
   p.append(label)
   const rating = document.createElement('input')
   rating.id = 'review-rating'
-  rating.name = 'rating'
   rating.setAttribute('type', 'number')
   rating.setAttribute('required', true)
   rating.setAttribute('min', '1')
@@ -209,18 +207,18 @@ displayReviewForm = (restaurantId) => {
 
   p = document.createElement('p')
   label = document.createElement('label')
-  label.for = "comments"
+  label.setAttribute('for', 'review-comments')
   label.innerHTML = 'Comments:'
   p.append(label)
   const comments = document.createElement('textarea')
   comments.id = 'review-comments'
-  comments.name = 'comments'
   comments.setAttribute('required', true)
   p.appendChild(comments)
   form.appendChild(p)
 
   p = document.createElement('p')
   const saveButton = document.createElement('button')
+  saveButton.id = 'save-review-button'
   saveButton.setAttribute('type', 'submit')
   saveButton.innerHTML = "Save Review"
   p.appendChild(saveButton)
