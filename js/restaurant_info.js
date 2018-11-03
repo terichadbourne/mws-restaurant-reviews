@@ -276,8 +276,15 @@ createReviewHTML = (review) => {
   name.innerHTML = review.name;
   li.appendChild(name);
 
+  let reviewDate = new Date(review.createdAt)
+  const months = [
+      'January', 'February', 'March',
+      'April', 'May', 'June',
+      'July', 'August', 'September',
+      'October', 'November', 'December'
+    ]
   const date = document.createElement('p');
-  date.innerHTML = review.createdAt;
+  date.innerHTML = `${months[reviewDate.getMonth()]} ${reviewDate.getDate()}, ${reviewDate.getFullYear()}`;
   li.appendChild(date);
 
   const rating = document.createElement('p');
