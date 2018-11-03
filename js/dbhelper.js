@@ -37,16 +37,15 @@ class DBHelper {
         case 0:
         case 1: {
           const restaurantStore = upgradeDb.createObjectStore('restaurants', {keyPath: 'id'});
-          console.log('finishing in openIDB')
+          console.log('in openIDB finishing creating restaurantStore')
           // restaurantStore.createIndex('restID', 'id');
         }
-        // case 2: {
-        //   const reviewStore = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
-        //   console.log('in openIDB and reviewStore is:')
-        //   console.log(reviewStore)
-        //   // reviewStore.createIndex('reviewID', 'id');
-        //   reviewStore.createIndex('restaurant', 'restaurant_id')
-        // }
+        case 2: {
+          const reviewStore = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
+          // reviewStore.createIndex('reviewID', 'id');
+          reviewStore.createIndex('restaurant', 'restaurant_id')
+          console.log('in openIDB finishing reviewStore')
+        }
       } // end switch
     })
   }
@@ -231,6 +230,8 @@ class DBHelper {
 
   /**
    * Update favorite status in IDB
+   * While online, it syncs to remote server, then stores also in idb
+   * Doesn't work offline currently
    */
    // TODO: Change order so it saves to IDB, then tries to sync. If offline,
    // queue later sync.
@@ -265,5 +266,38 @@ class DBHelper {
         console.log('error updating favorite in remote DB is: ', error)
       })
    }
+
+   static fetchReviewsByRestaurantId(id, callback) {
+     // try to fetch reviews from server
+     return fetch(`${DBHelper.DATABASE_REVIEWS_URL}${id}`)
+      .then(response => response.json())
+      // if it works, store them in IDB
+      .then(reviews => {
+        this.openIDB()
+          .then(db => {
+            if (!db) return;
+
+            let tx = db.transaction('reviews', 'readwrite')
+            const reviewStore = tx.objectStore('reviews')
+            // if there are multiple reviews, loop through the array to store
+            if (Array.isArray(reviews)) {
+              reviews.forEach(review => {
+                reviewStore.put(review)
+
+              })
+            } else {
+              // if there's only one, store that one
+              reviewStore.put(reviews)
+            }
+          })
+        console.log('reviews fetched from online as: ', reviews)
+        callback(null, reviews)
+      })
+      // if you couldn't get them from live server
+    .catch(error => {
+      console.log("couldn't load reviews from live server")
+      callback(error, null)
+    })
+  } // end fetchReviewsByRestaurantId
 
 } // end class DBHelper

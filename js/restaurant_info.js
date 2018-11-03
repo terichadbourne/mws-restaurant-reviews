@@ -116,7 +116,7 @@ fillRestaurantHTML = (restaurant = self.restaurant) => {
     fillRestaurantHoursHTML();
   }
   // fill reviews
-  fillReviewsHTML();
+  DBHelper.fetchReviewsByRestaurantId(self.restaurant.id, fillReviewsHTML);
 }
 
 /**
@@ -142,18 +142,26 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
 /**
  * Create all reviews HTML and add them to the webpage.
  */
-fillReviewsHTML = (reviews = self.restaurant.reviews) => {
+fillReviewsHTML = (error, reviews) => {
+  self.restaurant.reviews = reviews
+  console.log('in fillReviewsHTML and reviews is ', reviews)
+
+  if (error) {
+    console.log('error retrieving restaurant reviews is ', error)
+  }
   const container = document.getElementById('reviews-container');
   const title = document.createElement('h2');
   title.innerHTML = 'Reviews';
   container.appendChild(title);
 
   if (!reviews) {
+    console.log('in fillReviewsHTML and no reviews found')
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
     container.appendChild(noReviews);
     return;
   }
+  console.log('in fillReviewsHTML and looping through reviews')
   const ul = document.getElementById('reviews-list');
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
