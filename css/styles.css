@@ -62,7 +62,9 @@ article, aside, canvas, details, figcaption, figure, footer, header, hgroup, men
 	margin: 0;
 }
 
-
+label {
+	padding-right: 10px;
+}
 
 /* ====================== Navigation ====================== */
 nav {

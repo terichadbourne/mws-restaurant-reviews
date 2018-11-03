@@ -146,6 +146,8 @@ fillReviewsHTML = (error, reviews) => {
   self.restaurant.reviews = reviews
   console.log('in fillReviewsHTML and reviews is ', reviews)
 
+  displayReviewForm(self.restaurant.id)
+
   if (error) {
     console.log('error retrieving restaurant reviews is ', error)
   }
@@ -169,6 +171,102 @@ fillReviewsHTML = (error, reviews) => {
   container.appendChild(ul);
 }
 
+displayReviewForm = (restaurantId) => {
+  const header = document.createElement('h3')
+  header.innerHTML = 'Add a Review'
+
+  const form = document.createElement('form')
+  form.id = 'review-form'
+  form.dataset.restaurantId = restaurantId
+
+  let p = document.createElement('p')
+  let label = document.createElement('label')
+  label.for = "name"
+  label.innerHTML = 'Your Name:'
+  p.append(label)
+  const name = document.createElement('input')
+  name.id = 'review-name'
+  name.name = 'name'
+  name.setAttribute('type', 'text')
+  name.setAttribute('required', true)
+  p.appendChild(name)
+  form.appendChild(p)
+
+  p = document.createElement('p')
+  label = document.createElement('label')
+  label.for = "review-rating"
+  label.innerHTML = 'Review (1-5):'
+  p.append(label)
+  const rating = document.createElement('input')
+  rating.id = 'review-rating'
+  rating.name = 'rating'
+  rating.setAttribute('type', 'number')
+  rating.setAttribute('required', true)
+  rating.setAttribute('min', '1')
+  rating.setAttribute('max', '5')
+  p.appendChild(rating)
+  form.appendChild(p)
+
+  p = document.createElement('p')
+  label = document.createElement('label')
+  label.for = "comments"
+  label.innerHTML = 'Comments:'
+  p.append(label)
+  const comments = document.createElement('textarea')
+  comments.id = 'review-comments'
+  comments.name = 'comments'
+  comments.setAttribute('required', true)
+  p.appendChild(comments)
+  form.appendChild(p)
+
+  p = document.createElement('p')
+  const saveButton = document.createElement('button')
+  saveButton.setAttribute('type', 'submit')
+  saveButton.innerHTML = "Save Review"
+  p.appendChild(saveButton)
+  form.appendChild(p)
+
+  form.onsubmit = e => {
+    e.preventDefault()
+    const review = validateFormData()
+    if (!review) {
+      console.log('something was wrong with that data')
+    } else
+    console.log(review)
+    // DBHelper.addReview(review)
+    // TODO: create that function to add the review. If it's successful, clear the form.
+  }
+
+  const formContainer = document.getElementById('review-form-container')
+  formContainer.append(header)
+  formContainer.append(form)
+
+}
+
+validateFormData = () => {
+  const name = document.getElementById('review-name').value
+  const rating = parseInt(document.getElementById('review-rating').value)
+  const comments = document.getElementById('review-comments').value
+  if (!name || !rating || !comments) {
+    if (!name) {
+      alert('Name is required. Please try again.')
+    }
+    if (!rating) {
+      alert('Rating is required. Please try again.')
+    }
+    if (!comments) {
+      alert('Comments are required. Please try again.')
+    }
+    console.log('something missing')
+  } else {
+    const review = {
+      name: name,
+      rating: rating,
+      comments: comments
+    }
+    return review
+  }
+}
 /**
  * Create review HTML and add it to the webpage.
  */
@@ -179,7 +277,7 @@ createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = review.createdAt;
   li.appendChild(date);
 
   const rating = document.createElement('p');
