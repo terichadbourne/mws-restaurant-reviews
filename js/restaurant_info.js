@@ -226,13 +226,15 @@ displayReviewForm = (restaurantId) => {
 
   form.onsubmit = e => {
     e.preventDefault()
-    const review = validateFormData()
+    const review = validateFormData(restaurantId)
     if (!review) {
       console.log('something was wrong with that data')
     } else
     console.log(review)
     // DBHelper.addReview(review)
     // TODO: create that function to add the review. If it's successful, clear the form.
+    DBHelper.saveReview(self.restaurant.id, review, displayNewReview)
+
   }
 
   const formContainer = document.getElementById('review-form-container')
@@ -241,10 +243,12 @@ displayReviewForm = (restaurantId) => {
 
 }
 
-validateFormData = () => {
+validateFormData = (restaurantId) => {
   const name = document.getElementById('review-name').value
   const rating = parseInt(document.getElementById('review-rating').value)
   const comments = document.getElementById('review-comments').value
+  // const createdAt = new Date().toISOString()
+  // console.log(`createdAt is `, createdAt)
   if (!name || !rating || !comments) {
     if (!name) {
       alert('Name is required. Please try again.')
@@ -258,11 +262,32 @@ validateFormData = () => {
     console.log('something missing')
   } else {
     const review = {
+      restaurant_id: restaurantId,
       name: name,
       rating: rating,
       comments: comments
     }
     return review
+  }
+}
+
+/**
+ * Create review HTML and add it to the webpage.
+ * Called from DBHelper.saveReview() to add restaurant to
+ * list without a new fetch.
+ */
+displayNewReview = (error, review) => {
+  if (error) {
+    console.log('in displayNewReview and error is: ', error)
+  }
+  if (review) {
+    // clear the form
+    document.getElementById('review-form').reset();
+    // create a new li with this new review
+    review.createdAt = new Date().toISOString()
+    console.log('in displayNewReview and new review is: ', review)
+    const reviewsList = document.getElementById('reviews-list')
+    reviewsList.appendChild(createReviewHTML(review))
   }
 }
 /**

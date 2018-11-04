@@ -20,11 +20,11 @@ class DBHelper {
 
   /**
    * URL for reviews for a specific restaurant
-   * have to append restaurant id # when using
+   * have to append `?restaurant_id=<id> to get a specific restaurant's reviews
    */
   static get DATABASE_REVIEWS_URL() {
     const port = 1337 // Change this to your server port if different
-    return `http://localhost:${port}/reviews/?restaurant_id=`;
+    return `http://localhost:${port}/reviews/`;
   }
 
 
@@ -269,7 +269,7 @@ class DBHelper {
 
    static fetchReviewsByRestaurantId(id, callback) {
      // try to fetch reviews from server
-     return fetch(`${DBHelper.DATABASE_REVIEWS_URL}${id}`)
+     return fetch(`${DBHelper.DATABASE_REVIEWS_URL}?restaurant_id=${id}`)
       .then(response => response.json())
       // if it works, store them in IDB
       .then(reviews => {
@@ -299,5 +299,24 @@ class DBHelper {
       callback(error, null)
     })
   } // end fetchReviewsByRestaurantId
+
+static saveReview(restaurantId, review, callback) {
+  console.log('in saveReview and restaurant id is ', restaurantId)
+  console.log('and review is ', review)
+  return fetch(`${DBHelper.DATABASE_REVIEWS_URL}`, {
+    method: "POST",
+    body: JSON.stringify(review)
+  })
+  .then( response => {
+    console.log('tried to post review and response is: ', response)
+    //TODO: Save to IDB as well
+    callback(null, review)
+  })
+  .catch( error => {
+    console.log("can't post review and error is: ", error)
+    //TODO: Save to IDB and queue to save to remote 
+    callback(error, null)
+  })
+}
 
 } // end class DBHelper
