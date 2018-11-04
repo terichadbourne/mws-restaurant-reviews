@@ -220,12 +220,8 @@ class DBHelper {
        newStateBoolean = true
        newAriaLabel = "Remove from favorites"
      }
-    // update local and remote database first
+    // update local and remote database first, then update styling only if successful
     DBHelper.updateFavoriteInIDB(restaurantId, newStateBoolean, newStateString)
-    // then update button styling
-    const favoriteButton = document.getElementById("favorite-" + restaurantId)
-    favoriteButton.setAttribute('data-favorite', newStateString)
-    favoriteButton.setAttribute('aria-label', newAriaLabel)
   }
 
   /**
@@ -235,7 +231,7 @@ class DBHelper {
    */
    // TODO: Change order so it saves to IDB, then tries to sync. If offline,
    // queue later sync.
-   static updateFavoriteInIDB(restaurantId, newStateBoolean, newStateString) {
+   static updateFavoriteInIDB(restaurantId, newStateBoolean, newStateString, newAriaLabel) {
      console.log(`attempting to set idb state of restaurant #${restaurantId} to ${newStateBoolean}`)
      //update favorite status in remote DB
      fetch (`${DBHelper.DATABASE_URL}/${restaurantId}/?is_favorite=${newStateBoolean}`, {
@@ -251,19 +247,22 @@ class DBHelper {
           restaurantStore.get(restaurantId)
             // update is_Favorite in IDB and save record
             .then(restaurant => {
-              // console.log('IDB restaurant before updating is: ')
-              // console.log(restaurant)
               restaurant.is_favorite = newStateString
               restaurantStore.put(restaurant)
-              // console.log('updated to: ')
-              // console.log(restaurant)
               console.log('updated favorite status in IDB')
             })
           })
           return tx.complete;
         })
+        // update button UI once saved
+        .then(response => {
+          const favoriteButton = document.getElementById("favorite-" + restaurantId)
+          favoriteButton.setAttribute('data-favorite', newStateString)
+          favoriteButton.setAttribute('aria-label', newAriaLabel)
+        })
       .catch(error => {
         console.log('error updating favorite in remote DB is: ', error)
+        alert(`Unable to update favorite status while offline.`)
       })
    }
 
