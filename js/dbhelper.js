@@ -43,7 +43,7 @@ class DBHelper {
         case 2: {
           const reviewStore = upgradeDb.createObjectStore('reviews', {keyPath: 'id'});
           // reviewStore.createIndex('reviewID', 'id');
-          reviewStore.createIndex('restaurant', 'restaurant_id')
+          reviewStore.createIndex('restaurant_id', 'restaurant_id')
           console.log('in openIDB finishing reviewStore')
         }
       } // end switch
@@ -271,8 +271,9 @@ class DBHelper {
      // try to fetch reviews from server
      return fetch(`${DBHelper.DATABASE_REVIEWS_URL}?restaurant_id=${id}`)
       .then(response => response.json())
-      // if it works, store them in IDB
+      // if it sucessfully fetches response from live server
       .then(reviews => {
+        console.log('reviews fetched from online as: ', reviews)
         this.openIDB()
           .then(db => {
             if (!db) return;
@@ -290,13 +291,29 @@ class DBHelper {
               reviewStore.put(reviews)
             }
           })
-        console.log('reviews fetched from online as: ', reviews)
         callback(null, reviews)
       })
       // if you couldn't get them from live server
     .catch(error => {
-      console.log("couldn't load reviews from live server")
-      callback(error, null)
+      //try to load reviews from IDB
+      return DBHelper.openIDB()
+       .then(db => {
+         if(!db) return;
+         const reviewStore = db.transaction('reviews').objectStore('reviews');
+         const restaurantIdIndex = reviewStore.index('restaurant_id')
+         return restaurantIdIndex.getAll(id)
+           .then(offlineReviews => {
+             // if no reviews available in idb
+             if (offlineReviews.length === 0) {
+               console.log(`no reviews for restaurant ${id} found in IDB`)
+               callback ('offline and no reviews in IndexedDB', null)
+               // if reviews available in idb
+             } else {
+               console.log(`found these reviews for restaurant ${id} in IDB: `, offlineReviews)
+               callback (null, offlineReviews)
+             }
+           })
+       })
     })
   } // end fetchReviewsByRestaurantId
 
@@ -314,7 +331,7 @@ static saveReview(restaurantId, review, callback) {
   })
   .catch( error => {
     console.log("can't post review and error is: ", error)
-    //TODO: Save to IDB and queue to save to remote 
+    //TODO: Save to IDB and queue to save to remote
     callback(error, null)
   })
 }

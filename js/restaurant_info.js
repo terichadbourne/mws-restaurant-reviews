@@ -144,31 +144,30 @@ fillRestaurantHoursHTML = (operatingHours = self.restaurant.operating_hours) => 
  */
 fillReviewsHTML = (error, reviews) => {
   self.restaurant.reviews = reviews
-  console.log('in fillReviewsHTML and reviews is ', reviews)
+  const container = document.getElementById('reviews-container');
+  const noReviews = document.getElementById('no-reviews-message');
 
+  // display form to add new review
   displayReviewForm(self.restaurant.id)
 
+  // display reviews or message about why there aren't any to display
+  // if offline with no reviews cached
   if (error) {
-    console.log('error retrieving restaurant reviews is ', error)
-  }
-  const container = document.getElementById('reviews-container');
-  const title = document.createElement('h2');
-  title.innerHTML = 'Reviews';
-  container.appendChild(title);
-
-  if (!reviews) {
+    console.log('in fillReviewsHTML and error retrieving restaurant reviews is ', error)
+    noReviews.innerHTML = 'You seem to be offline with no cached reviews to display.';
+  // if there aren't any reviews
+  } else if (!reviews) {
     console.log('in fillReviewsHTML and no reviews found')
-    const noReviews = document.createElement('p');
-    noReviews.innerHTML = 'No reviews yet!';
-    container.appendChild(noReviews);
-    return;
+    noReviews.innerHTML = 'No reviews yet. Why not be a trendsetter?';
+  //if there are reviews (live or cached)
+  } else {
+    console.log('in fillReviewsHTML and looping through reviews')
+    const ul = document.getElementById('reviews-list');
+    reviews.forEach(review => {
+      ul.appendChild(createReviewHTML(review));
+    });
+    container.appendChild(ul);
   }
-  console.log('in fillReviewsHTML and looping through reviews')
-  const ul = document.getElementById('reviews-list');
-  reviews.forEach(review => {
-    ul.appendChild(createReviewHTML(review));
-  });
-  container.appendChild(ul);
 }
 
 displayReviewForm = (restaurantId) => {

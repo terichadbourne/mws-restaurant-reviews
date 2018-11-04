@@ -45,6 +45,12 @@ self.addEventListener('fetch', event => {
   const requestUrl = new URL(event.request.url)
   let cacheRequest = event.request;
 
+  // prevent service worker from intercepting fetches of reviews
+  if (event.request.url.includes("reviews")) {
+    console.log(`not allowing service worker to intercept reviews fetch`)
+    return;
+  }
+  
   // if the request is for a specific restaurant page, it won't
   // find anything in the cache with a search string included
   // so change the request to look for just restaurant.html
