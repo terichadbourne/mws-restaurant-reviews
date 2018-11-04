@@ -267,7 +267,8 @@ validateFormData = (restaurantId) => {
       name: name,
       rating: rating,
       comments: comments,
-      createdAt: Date.now()
+      createdAt: Date.now(),
+      id: Date.now()
     }
     return review
   }
@@ -278,10 +279,8 @@ validateFormData = (restaurantId) => {
  * Called from DBHelper.saveReview() to add restaurant to
  * list without a new fetch.
  */
-displayNewReview = (error, review) => {
-  if (error) {
-    console.log('in displayNewReview and error is: ', error)
-  }
+displayNewReview = (offlineStatus, review) => {
+  console.log('offline status of review saved is: ', offlineStatus)
   if (review) {
     // clear the form
     document.getElementById('review-form').reset();
@@ -290,14 +289,24 @@ displayNewReview = (error, review) => {
     // put the new review at the top of the list right after the form so it's
     // obvious it was saved
     const reviewForm = document.getElementById('review-form-container')
-    reviewForm.after(createReviewHTML(review))
+    reviewForm.after(createReviewHTML(review, offlineStatus))
+  } else {
+    console.log('no review returned for some reason')
   }
 }
 /**
  * Create review HTML and add it to the webpage.
  */
-createReviewHTML = (review) => {
+createReviewHTML = (review, offlineStatus) => {
+
+  console.log( `offlineStatus is `, offlineStatus)
+  // change undefined and string false to false
+  if (offlineStatus === undefined || offlineStatus === "false") {
+    offlineStatus = false
+  }
+  console.log( `new offlineStatus is `, offlineStatus)
   const li = document.createElement('li');
+  li.classList.toggle('offline', offlineStatus)
   const name = document.createElement('p');
   name.innerHTML = review.name;
   li.appendChild(name);

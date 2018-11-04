@@ -194,6 +194,12 @@ nav #breadcrumb {
   text-align: left;
   width: 300px;
 }
+
+/* applied to reviews not yet saved to server  */
+#reviews-list li.offline {
+  border: 3px solid red;
+}
+
 #restaurants-list .restaurant-img {
   background-color: #ccc;
   display: block;

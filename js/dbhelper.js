@@ -46,6 +46,11 @@ class DBHelper {
           reviewStore.createIndex('restaurant_id', 'restaurant_id')
           console.log('in openIDB finishing reviewStore')
         }
+        case 3: {
+          const syncStore = upgradeDb.createObjectStore('sync_queue', {keyPath: 'id', autoIncrement: true});
+          syncStore.createIndex('restaurant_id', 'restaurant_id')
+          console.log('in openIDB finishing syncStore')
+        }
       } // end switch
     })
   }
@@ -316,23 +321,62 @@ class DBHelper {
     })
   } // end fetchReviewsByRestaurantId
 
-static saveReview(restaurantId, review, callback) {
-  console.log('in saveReview and restaurant id is ', restaurantId)
-  console.log('and review is ', review)
-  return fetch(`${DBHelper.DATABASE_REVIEWS_URL}`, {
-    method: "POST",
-    body: JSON.stringify(review)
-  })
-  .then( response => {
-    console.log('tried to post review and response is: ', response)
-    //TODO: Save to IDB as well
-    callback(null, review)
-  })
-  .catch( error => {
-    console.log("can't post review and error is: ", error)
-    //TODO: Save to IDB and queue to save to remote
-    callback(error, null)
-  })
-}
+  static saveReview(restaurantId, review, callback) {
+    console.log('in saveReview and restaurant id is ', restaurantId)
+    console.log('and review is ', review)
+    // save to reviews IDB whether online or offline
+    DBHelper.saveReviewInIDB(restaurantId, review)
+    .then(()=> {
+      console.log('succeeded at saving to REVIEWS idb, will now try to save remotely')
+      // if online, save to live database
+      return fetch(`${DBHelper.DATABASE_REVIEWS_URL}`, {
+        method: "POST",
+        body: JSON.stringify(review)
+      })
+      .then( response => response.json() )
+      .then(review => {
+        console.log('tried to post review and successful review response is: ', review)
+        callback("false", review)
+      })
+      // if not able to save to live database, save to sync queue
+      .catch( error => {
+        console.log("can't post review and error is: ", error)
+        DBHelper.queueReviewInIDB(restaurantId, review)
+        .then(()=> {
+          console.log('saved in SYNC IDB ')
+          callback("true", review)
+        })
+      })
+    })
+  }
+
+  static saveReviewInIDB(restaurantId, review) {
+    console.log('in updateReviewInIDB')
+    return DBHelper.openIDB()
+      .then(db => {
+        console.log('opened database')
+        let tx = db.transaction('reviews', 'readwrite')
+        const reviewStore = tx.objectStore('reviews')
+        console.log('about to put review in REVIEWS IDB')
+        reviewStore.put(review)
+        console.log(`put review into IDB`)
+        return tx.complete;
+      })
+  }
+
+  static queueReviewInIDB(restaurantId, review) {
+    console.log('in queueReviewInIDB')
+    return DBHelper.openIDB()
+      .then(db => {
+        console.log('opened database')
+        let tx = db.transaction('sync_queue', 'readwrite')
+        const syncStore = tx.objectStore('sync_queue')
+        console.log('about to put review in SYNC IDB')
+        syncStore.put(review)
+        console.log(`put review into SYNC IDB`)
+        return tx.complete;
+      })
+  }
+
 
 } // end class DBHelper
