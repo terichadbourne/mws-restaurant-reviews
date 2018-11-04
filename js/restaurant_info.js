@@ -264,7 +264,8 @@ validateFormData = (restaurantId) => {
       restaurant_id: restaurantId,
       name: name,
       rating: rating,
-      comments: comments
+      comments: comments,
+      createdAt: Date.now()
     }
     return review
   }
@@ -283,7 +284,6 @@ displayNewReview = (error, review) => {
     // clear the form
     document.getElementById('review-form').reset();
     // create a new li with this new review
-    review.createdAt = new Date().toISOString()
     console.log('in displayNewReview and new review is: ', review)
     const reviewsList = document.getElementById('reviews-list')
     reviewsList.appendChild(createReviewHTML(review))
