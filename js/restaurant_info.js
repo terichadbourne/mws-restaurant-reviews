@@ -163,7 +163,9 @@ fillReviewsHTML = (error, reviews) => {
   } else {
     console.log('in fillReviewsHTML and looping through reviews')
     const ul = document.getElementById('reviews-list');
-    reviews.forEach(review => {
+    // reverse array to display newest first
+    let sortedReviews = reviews.reverse()
+    sortedReviews.forEach(review => {
       ul.appendChild(createReviewHTML(review));
     });
     container.appendChild(ul);
@@ -285,8 +287,10 @@ displayNewReview = (error, review) => {
     document.getElementById('review-form').reset();
     // create a new li with this new review
     console.log('in displayNewReview and new review is: ', review)
-    const reviewsList = document.getElementById('reviews-list')
-    reviewsList.appendChild(createReviewHTML(review))
+    // put the new review at the top of the list right after the form so it's
+    // obvious it was saved
+    const reviewForm = document.getElementById('review-form-container')
+    reviewForm.after(createReviewHTML(review))
   }
 }
 /**
