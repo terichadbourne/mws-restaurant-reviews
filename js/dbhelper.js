@@ -321,7 +321,7 @@ class DBHelper {
     })
   } // end fetchReviewsByRestaurantId
 
-  static saveReview(restaurantId, review, callback) {
+  static saveReview(restaurantId, review, callback, finalCallback) {
     console.log('in saveReview and restaurant id is ', restaurantId)
     console.log('and review is ', review)
     // save to reviews IDB whether online or offline
@@ -341,7 +341,7 @@ class DBHelper {
       // if not able to save to live database, save to sync queue
       .catch( error => {
         console.log("can't post review and error is: ", error)
-        DBHelper.queueReviewInIDB(restaurantId, review)
+        DBHelper.queueReviewInIDB(restaurantId, review, finalCallback)
         .then(()=> {
           console.log('saved in SYNC IDB ')
           callback("true", review)
@@ -364,7 +364,7 @@ class DBHelper {
       })
   }
 
-  static queueReviewInIDB(restaurantId, review) {
+  static queueReviewInIDB(restaurantId, review, finalCallback) {
     console.log('in queueReviewInIDB')
     return DBHelper.openIDB()
       .then(db => {
@@ -375,6 +375,78 @@ class DBHelper {
         syncStore.put(review)
         console.log(`put review into SYNC IDB`)
         return tx.complete;
+      })
+      .then(DBHelper.syncLoop(restaurantId, finalCallback))
+  }
+
+  // I got the idea for this pseudo-recursion via callback from project coach Doug Brown
+  // https://github.com/thefinitemonkey/udacity-restaurant-reviews/blob/master/app/js/dbhelper.js
+  // but have implemented it a bit differently
+  static syncLoop(restaurantId, finalCallback) {
+    DBHelper.attemptSync(restaurantId, DBHelper.syncLoop, finalCallback)
+  }
+
+  // loop through queued items by running this again and again until the
+  // network fails
+  static attemptSync(restaurantId, callback, finalCallback) {
+    DBHelper.openIDB()
+      .then(db => {
+        if(!db) return;
+        let tx = db.transaction('sync_queue', 'readwrite')
+        const syncStore = tx.objectStore('sync_queue')
+        console.log('opening sync queue to try to sync entries')
+        syncStore.openCursor()
+        .then(cursor => {
+          // if there's nothing to loop through, bail out and run fillReviewsHTML
+          // red boxes will go away when loading from reviews object store in IDB
+          if (!cursor) {
+            console.log('nothing in sync queue; returning')
+            const reviewStore = db.transaction('reviews').objectStore('reviews');
+            const restaurantIdIndex = reviewStore.index('restaurant_id')
+            return restaurantIdIndex.getAll(restaurantId)
+              .then(reviews => {
+                  finalCallback(null, reviews)
+              })
+            return;
+          }
+          const review = cursor.value
+          console.log('in cursor and review is: ', review)
+          console.log('about to sync that to server')
+          return fetch(`${DBHelper.DATABASE_REVIEWS_URL}`, {
+            method: "POST",
+            body: JSON.stringify(review)
+          })
+          .then( response => {
+            console.log('response.status is: ', response.status)
+            console.log('response.ok is: ', response.ok)
+            console.log('response.redirected is: ', response.redirected)
+            // if the network response is bad, assume the connection won't
+            // work and stop trying to sync
+            if (!response.ok && !response.redirected) {
+              console.log('bailing because network response is breadcrumb')
+              return;
+            }
+          })
+          // if the sync worked, delete the first cursor (which was just synced)
+          // and then run this function again to sync the next entry in the list
+          .then( () => {
+            console.log('successfully synced that one, now trying to delete it')
+            let tx = db.transaction('sync_queue', 'readwrite')
+            const syncStoreAgain = tx.objectStore('sync_queue')
+            syncStoreAgain.openCursor()
+            .then(cursor => {
+              cursor.delete()
+              .then(()=> {
+                callback() // this makes this function run again
+              })
+            })
+            console.log('deleted that one from queue')
+          })
+          .catch( error => {
+            console.log('error saving to server or cursoring is ', error)
+            return;
+          })
+        })
       })
   }
 

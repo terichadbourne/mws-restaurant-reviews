@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
   if (!navigator.onLine) {
     mapDiv.classList.add("offline")
   } else {
+    DBHelper.syncLoop(getParameterByName('id'), fillReviewsHTML)
     mapDiv.classList.remove("offline")
   }
   initMap();
@@ -234,7 +235,7 @@ displayReviewForm = (restaurantId) => {
     console.log(review)
     // DBHelper.addReview(review)
     // TODO: create that function to add the review. If it's successful, clear the form.
-    DBHelper.saveReview(self.restaurant.id, review, displayNewReview)
+    DBHelper.saveReview(self.restaurant.id, review, displayNewReview, fillReviewsHTML)
 
   }
 
