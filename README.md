@@ -12,6 +12,23 @@ than storing it in a local JSON file. JSON responses from the server were cached
 Now in Stage 3, I'm accessing a new server which delivers restaurant info
 separately from reviews. Users can now mark restaurants as favorites, with the database updated as needed. They can also now add their own restaurant reviews, even if offline, and those reviews will be sent to the server when a connection is available.
 
+See below for instructions to run this app locally.
+________________
+
+
+<div>
+  <img src="https://user-images.githubusercontent.com/19171465/111891888-be103900-89cc-11eb-92a0-9faf52850df1.png" height="400">
+  <img src="https://user-images.githubusercontent.com/19171465/111891971-5dcdc700-89cd-11eb-9e18-265aa617afb3.png" height="400">
+  <img src="https://user-images.githubusercontent.com/19171465/111892014-cae15c80-89cd-11eb-83ac-fcbed5b32e43.png" height="400">
+</div>
+<div>
+  <img src="https://user-images.githubusercontent.com/19171465/111892071-4b07c200-89ce-11eb-8449-de67c7dc154a.png" height="400">
+  <img src="https://user-images.githubusercontent.com/19171465/111892164-4f80aa80-89cf-11eb-957e-53c9716ea96e.png" height="400">
+</div>
+
+________________________________
+
+
 ### How to run this app
 
 #### Run the server
@@ -37,4 +54,8 @@ You're now ready to run the client app.
 
 5. With your server running, visit the site at: `http://localhost:8000` (SECURITY NOTE: Viewers of your localhost application can still discover your Mapbox token by revealing the source code through dev tools.)
 
-6. If you want to test offline functionality on localhost, you will either need to kill your server (`Ctrl-C`) or turn on offline mode in Chrome or Firefox dev tools. (Remember, you must always visit a site once while online to cache resources before it becomes accessible offline.)
+#### Test offline functionality
+
+To test offline functionality on localhost, you will either need to kill your server (`Ctrl-C`) or turn on offline mode in your dev tools. (<a href="https://developers.google.com/web/ilt/pwa/tools-for-pwa-developers#simulate_offline_behavior">Learn how how to simulate offline behavior</a> in Chrome and Firefox.)
+
+Remember, you must always visit a site once while online to cache resources before it becomes accessible offline.
