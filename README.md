@@ -35,7 +35,7 @@ ________________________________
 
 1. Fork and clone the separate [server repo](https://github.com/terichadbourne/mws-restaurant-stage-3-server).
 2. Navigate into your server directory from the command line.
-3. Install project dependancies with `npm i`.
+3. Install project dependencies with `npm i`.
 4. Install Sails.js globally with `npm i sails -g`.
 5. Start the server with `node server`.
 6. You can find a detailed [list of endpoints](https://github.com/terichadbourne/mws-restaurant-stage-3-server/blob/master/README.md) made available by the API in the README of the server repo. 
