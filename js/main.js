@@ -77,13 +77,13 @@ initMap = (restaurants) => {
           zoom: 12,
           scrollWheelZoom: false
         });
-    L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.jpg70?access_token={mapboxToken}', {
-      mapboxToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+      accessToken: topSecretMapboxToken, //be sure to set a value for this in js/.secrets.js
       maxZoom: 18,
-      attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-        '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-        'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-      id: 'mapbox.streets'
+      tileSize: 512,
+      zoomOffset: -1,
+      attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> <strong><a href="https://www.mapbox.com/map-feedback/" target="_blank">Improve this map</a></strong>',
+      id: 'mapbox/streets-v11'
     }).addTo(newMap);
     mapDiv.classList.remove("offline") // set map div class to reflect online status
   }
